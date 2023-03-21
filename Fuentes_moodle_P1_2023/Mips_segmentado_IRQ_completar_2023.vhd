@@ -1,10 +1,10 @@
 ----------------------------------------------------------------------------------
--- Description: Mips segmentado tal y como lo hemos estudiado en clase. Sus características son:
+-- Description: Mips segmentado tal y como lo hemos estudiado en clase. Sus caracterï¿½sticas son:
 -- Saltos 1-retardados
--- instrucciones aritméticas, LW, SW y BEQ
+-- instrucciones aritmï¿½ticas, LW, SW y BEQ
 -- MI y MD de 128 palabras de 32 bits
 -- Excepciones: IRQ, ABORT y UNDEF
--- Línea de IRQ
+-- Lï¿½nea de IRQ
 -- Nuevas instrucciones: RTE y WRO
 -- Hay funcionalidad incompleta en este archivo, y en UD y UA. Buscar la etiqueta: completar
 ----------------------------------------------------------------------------------
@@ -15,14 +15,14 @@ entity MIPs_segmentado is
     Port ( 	clk : in  STD_LOGIC;
            	reset : in  STD_LOGIC;
            	IRQ	: 	in  STD_LOGIC; 
-           	IO_input: in STD_LOGIC_VECTOR (31 downto 0); -- 32 bits de entrada para el MIPS para IO. En el primer proyecto no se usa. En el segundo sí
+           	IO_input: in STD_LOGIC_VECTOR (31 downto 0); -- 32 bits de entrada para el MIPS para IO. En el primer proyecto no se usa. En el segundo sï¿½
 	   		IO_output : out  STD_LOGIC_VECTOR (31 downto 0)); -- 32 bits de salida para el MIPS para IO
 end MIPs_segmentado;
 
 architecture Behavioral of MIPs_segmentado is
 
 component reg is
-    generic (size: natural := 32);  -- por defecto son de 32 bits, pero se puede usar cualquier tamaño
+    generic (size: natural := 32);  -- por defecto son de 32 bits, pero se puede usar cualquier tamaï¿½o
 	Port ( Din : in  STD_LOGIC_VECTOR (size -1 downto 0);
            clk : in  STD_LOGIC;
 		   reset : in  STD_LOGIC;
@@ -52,9 +52,9 @@ component Data_Memory_Subsystem is port (
 		  WE : in std_logic;		-- write enable	del MIPS
 		  RE : in std_logic;		-- read enable del MIPS	
 		  IO_input: in std_logic_vector (31 downto 0); --dato que viene de una entrada del sistema
-		  Mem_ready: out std_logic; -- indica si podemos hacer la operación solicitada en el ciclo actual
-		  Data_abort: out std_logic; --indica que el último acceso a memoria ha sido un error
-		  Dout : out std_logic_vector (31 downto 0) --dato que se envía al Mips
+		  Mem_ready: out std_logic; -- indica si podemos hacer la operaciï¿½n solicitada en el ciclo actual
+		  Data_abort: out std_logic; --indica que el ï¿½ltimo acceso a memoria ha sido un error
+		  Dout : out std_logic_vector (31 downto 0) --dato que se envï¿½a al Mips
 		  ); 
 end component;
 
@@ -69,15 +69,15 @@ component memoriaRAM_I is port (
 end component;
 
 component Banco_ID is
- Port ( IR_in : in  STD_LOGIC_VECTOR (31 downto 0); -- instrucción leida en IF
+ Port ( IR_in : in  STD_LOGIC_VECTOR (31 downto 0); -- instrucciï¿½n leida en IF
         PC4_in:  in  STD_LOGIC_VECTOR (31 downto 0); -- PC+4 sumado en IF
 		clk : in  STD_LOGIC;
 		reset : in  STD_LOGIC;
         load : in  STD_LOGIC;
-        IR_ID : out  STD_LOGIC_VECTOR (31 downto 0); -- instrucción en la etapa ID
+        IR_ID : out  STD_LOGIC_VECTOR (31 downto 0); -- instrucciï¿½n en la etapa ID
         PC4_ID:  out  STD_LOGIC_VECTOR (31 downto 0);
         --nuevo para excepciones
-        PC_exception:  in  STD_LOGIC_VECTOR (31 downto 0); -- PC al que se volverá si justo esta instrucción está en MEM cuando llega una excepción. 
+        PC_exception:  in  STD_LOGIC_VECTOR (31 downto 0); -- PC al que se volverï¿½ si justo esta instrucciï¿½n estï¿½ en MEM cuando llega una excepciï¿½n. 
         PC_exception_ID:  out  STD_LOGIC_VECTOR (31 downto 0);-- PC+4 en la etapa ID
         --bits de validez
         valid_I_IF: in STD_LOGIC;
@@ -109,7 +109,7 @@ component two_bits_shifter is
 end component;
 
 component UC is
-Port ( 		valid_I_ID : in  STD_LOGIC; --indica si es una instrucción válida			
+Port ( 		valid_I_ID : in  STD_LOGIC; --indica si es una instrucciï¿½n vï¿½lida			
 			IR_op_code : in  STD_LOGIC_VECTOR (5 downto 0);
          	Branch : out  STD_LOGIC;
            	RegDst : out  STD_LOGIC;
@@ -118,18 +118,18 @@ Port ( 		valid_I_ID : in  STD_LOGIC; --indica si es una instrucción válida
            	MemRead : out  STD_LOGIC;
            	MemtoReg : out  STD_LOGIC;
            	RegWrite : out  STD_LOGIC;
-            -- Nuevas señales
-		   	RTE	: out  STD_LOGIC; -- indica que es una instrucción RTE
-		   	Write_output: out STD_LOGIC; --indica que es una instrucción que escribe en la salida
-		   	UNDEF: out STD_LOGIC --indica que el código de operación no pertenence a una instrucción conocida
-			  -- Fin Nuevas señales
+            -- Nuevas seï¿½ales
+		   	RTE	: out  STD_LOGIC; -- indica que es una instrucciï¿½n RTE
+		   	Write_output: out STD_LOGIC; --indica que es una instrucciï¿½n que escribe en la salida
+		   	UNDEF: out STD_LOGIC --indica que el cï¿½digo de operaciï¿½n no pertenence a una instrucciï¿½n conocida
+			  -- Fin Nuevas seï¿½ales
            );
 end component;
--- Unidad de detección de riesgos
+-- Unidad de detecciï¿½n de riesgos
 component UD is
-Port (   	valid_I_ID : in  STD_LOGIC; --indica si es una instrucción válida
-			valid_I_EX : in  STD_LOGIC; --indica si es una instrucción de EX es válida
-			valid_I_MEM : in  STD_LOGIC; --indica si es una instrucción de MEM es válida
+Port (   	valid_I_ID : in  STD_LOGIC; --indica si es una instrucciï¿½n vï¿½lida
+			valid_I_EX : in  STD_LOGIC; --indica si es una instrucciï¿½n de EX es vï¿½lida
+			valid_I_MEM : in  STD_LOGIC; --indica si es una instrucciï¿½n de MEM es vï¿½lida
 			Reg_Rs_ID: in  STD_LOGIC_VECTOR (4 downto 0); --registros Rs y Rt en la etapa ID
 		  	Reg_Rt_ID	: in  STD_LOGIC_VECTOR (4 downto 0);
 			MemRead_EX	: in std_logic; -- informaciÃ³n sobre la instrucciÃ³n en EX (destino, si lee de memoria y si escribe en registro)
@@ -140,7 +140,7 @@ Port (   	valid_I_ID : in  STD_LOGIC; --indica si es una instrucción válida
 			IR_op_code	: in  STD_LOGIC_VECTOR (5 downto 0); -- cÃ³digo de operaciÃ³n de la instrucciÃ³n en IEEE
          	salto_tomado			: in std_logic; -- 1 cuando se produce un salto 0 en caso contrario
          	--Nuevo
-         	Mem_ready: in std_logic; -- 1 cuando la memoria puede realizar la operación solicitada en el ciclo actual
+         	Mem_ready: in std_logic; -- 1 cuando la memoria puede realizar la operaciï¿½n solicitada en el ciclo actual
 			parar_EX: out  STD_LOGIC; -- Indica que las etapas MEM y previas deben parar
 			Kill_IF		: out  STD_LOGIC; -- Indica que la instrucciÃ³n en IF no debe ejecutarse (fallo en la predicciÃ³n de salto tomado)
 			Parar_ID		: out  STD_LOGIC); -- Indica que las etapas ID y previas deben parar
@@ -179,7 +179,7 @@ COMPONENT Banco_EX
            	Reg_Rd_ID : in  STD_LOGIC_VECTOR (4 downto 0);
            	Reg_Rt_EX : out  STD_LOGIC_VECTOR (4 downto 0);
            	Reg_Rd_EX : out  STD_LOGIC_VECTOR (4 downto 0);
-            -- Nuevo excepción
+            -- Nuevo excepciï¿½n
            	PC_exception_ID:  in  STD_LOGIC_VECTOR (31 downto 0);
            	PC_exception_EX:  out  STD_LOGIC_VECTOR (31 downto 0);
            	--bits de validez
@@ -187,11 +187,11 @@ COMPONENT Banco_EX
         	valid_I_EX: out STD_LOGIC);
     END COMPONENT;
         
--- Unidad de anticipación de operandos
+-- Unidad de anticipaciï¿½n de operandos
     COMPONENT UA
 	Port(
-			valid_I_MEM : in  STD_LOGIC; --indica si es una instrucción de MEM es válida
-			valid_I_WB : in  STD_LOGIC; --indica si es una instrucción de WB es válida
+			valid_I_MEM : in  STD_LOGIC; --indica si es una instrucciï¿½n de MEM es vï¿½lida
+			valid_I_WB : in  STD_LOGIC; --indica si es una instrucciï¿½n de WB es vï¿½lida
 			Reg_Rs_EX: IN  std_logic_vector(4 downto 0); 
 			Reg_Rt_EX: IN  std_logic_vector(4 downto 0);
 			RegWrite_MEM: IN std_logic;
@@ -231,7 +231,7 @@ COMPONENT Banco_EX
 COMPONENT Banco_MEM
     PORT(
        		ALU_out_EX : in  STD_LOGIC_VECTOR (31 downto 0); 
-			ALU_out_MEM : out  STD_LOGIC_VECTOR (31 downto 0); -- instrucción leida en IF
+			ALU_out_MEM : out  STD_LOGIC_VECTOR (31 downto 0); -- instrucciï¿½n leida en IF
          	clk : in  STD_LOGIC;
 			reset : in  STD_LOGIC;
     		load : in  STD_LOGIC;
@@ -247,7 +247,7 @@ COMPONENT Banco_MEM
 			BusB_MEM: out  STD_LOGIC_VECTOR (31 downto 0); -- para los store
 			RW_EX : in  STD_LOGIC_VECTOR (4 downto 0); -- registro destino de la escritura
          	RW_MEM : out  STD_LOGIC_VECTOR (4 downto 0);
-         	-- Nuevo excepción
+         	-- Nuevo excepciï¿½n
             PC_exception_EX:  in  STD_LOGIC_VECTOR (31 downto 0);
             PC_exception_MEM:  out  STD_LOGIC_VECTOR (31 downto 0);           	
          	--bits de validez
@@ -283,7 +283,7 @@ COMPONENT Banco_MEM
        		count_enable : in  STD_LOGIC;
        		count : out  STD_LOGIC_VECTOR (size-1 downto 0));
 	end COMPONENT;
--- Señales internas MIPS	
+-- Seï¿½ales internas MIPS	
 	CONSTANT ARIT : STD_LOGIC_VECTOR (5 downto 0) := "000001";
 	signal load_PC, RegWrite_ID, RegWrite_EX, RegWrite_MEM, RegWrite_WB, RegWrite, Z, Branch_ID, RegDst_ID, RegDst_EX, ALUSrc_ID, ALUSrc_EX: std_logic;
 	signal MemtoReg_ID, MemtoReg_EX, MemtoReg_MEM, MemtoReg_WB, MemWrite_ID, MemWrite_EX, MemWrite_MEM, MemRead_ID, MemRead_EX, MemRead_MEM, WE, RE: std_logic;
@@ -295,7 +295,7 @@ COMPONENT Banco_MEM
 	signal IR_op_code: std_logic_vector(5 downto 0);
 	signal MUX_ctrl_A, MUX_ctrl_B : std_logic_vector(1 downto 0);
 	signal salto_tomado: std_logic;
---Señales solución
+--Seï¿½ales soluciï¿½n
 	signal parar_ID, parar_EX, RegWrite_EX_mux_out, Kill_IF, reset_ID, load_ID, load_EX, load_Mem : std_logic;
 	signal Write_output, write_output_UC : std_logic;
 -- Soporte Excepciones--
@@ -315,46 +315,46 @@ COMPONENT Banco_MEM
 
 begin
 	-- ****************************************************************************************************
-	-- Gestión de Excepciones: 
+	-- Gestiï¿½n de Excepciones: 
 	--		* IRQ: es una entrada del MIPs 
-	--		* Data_abort: la genera el controlador de memoria cuando recibe una dirección no alienada, o fuera del rango de la memoria
-	--		* UNDEF: la genera la unidad de control cuando le llega una instrucción válida con un código de operación desconocido
+	--		* Data_abort: la genera el controlador de memoria cuando recibe una direcciï¿½n no alienada, o fuera del rango de la memoria
+	--		* UNDEF: la genera la unidad de control cuando le llega una instrucciï¿½n vï¿½lida con un cï¿½digo de operaciï¿½n desconocido
 	-- ****************************************************************************************************
 	-------------------------------------------------------------------------------------------------------------------------------
 	-- Status_register	 
-	-- el registro tiene como entradas y salidas vectores de señales cuya longitud se indica en size. En este caso es un vector de tamaño 2
-	-- El bit más significativo permite deshabilitar (valor 1) o habilitar las excepciones (valor 0)
-	-- El bit menos significativo informa si estamos en modo Excepción o estamos en modo normal
+	-- el registro tiene como entradas y salidas vectores de seï¿½ales cuya longitud se indica en size. En este caso es un vector de tamaï¿½o 2
+	-- El bit mï¿½s significativo permite deshabilitar (valor 1) o habilitar las excepciones (valor 0)
+	-- El bit menos significativo informa si estamos en modo Excepciï¿½n o estamos en modo normal
 	
 	status_reg: reg generic map (size => 2)
 			port map (	Din => status_input, clk => clk, reset => reset, load => update_status, Dout => MIPS_status);
 	------------------------------------------------------------------------------------
-	-- Completar: falta la lógica que detecta cuándo se va a procesaruna excepción: cuando se recibe una de las señales (IRQ, Data_abort y Undef) y las excepciones están habilitadas (MIPS_status(1)='1')
-	Exception_accepted <= '0';
+	-- Completar: falta la lï¿½gica que detecta cuï¿½ndo se va a procesaruna excepciï¿½n: cuando se recibe una de las seï¿½ales (IRQ, Data_abort y Undef) y las excepciones estï¿½n habilitadas (MIPS_status(1)='1')
+	Exception_accepted <= ((IRQ = '1' ) or (Data_Abort = '1') or (UNDEF = '1') ) and MIPS_status(1)='1';
 	------------------------------------------------------------------------------------
-	-- Completar: falta la lógica que gestiona update_status. Diseñadla.
-	update_status	<= Exception_accepted or RTE_ID;
+	-- Completar: falta la lï¿½gica que gestiona update_status. Diseï¿½adla.
+	update_status	<= Exception_accepted = '1' or RTE_ID = '1' ;
 	-- Fin completar;
 	------------------------------------------------------------------------------------
 				
 	-- multiplexor para elegir la entrada del registro de estado
-	-- En este procesador sólo hay dos opciones ya que al entrar en modo excepción se deshabilitan las excepciones:
-	-- 		* "11" al entrar en una IRQ (Excepciones deshabilitadas y modo Excepción)
+	-- En este procesador sï¿½lo hay dos opciones ya que al entrar en modo excepciï¿½n se deshabilitan las excepciones:
+	-- 		* "11" al entrar en una IRQ (Excepciones deshabilitadas y modo Excepciï¿½n)
 	--		* "00" en el resto de casos
-	-- Podría hacerse con un bit, pero usamos dos para permitir ampliaciones)
+	-- Podrï¿½a hacerse con un bit, pero usamos dos para permitir ampliaciones
 	status_input	<= 	"11" when (Exception_accepted = '1') else "00";							
 	
 	------------------------------------------------------------------------------------
-	-- Al procesar una excepción las instrucciones que están en Mem y WB continúan su ejecución. El resto se matan
-	-- Para retornar se debe eligir la siguiente instrucción válida. Para ello tenemos sus direcciones almacenadas en:
+	-- Al procesar una excepciï¿½n las instrucciones que estï¿½n en Mem y WB continï¿½an su ejecuciï¿½n. El resto se matan
+	-- Para retornar se debe eligir la siguiente instrucciï¿½n vï¿½lida. Para ello tenemos sus direcciones almacenadas en:
 	-- PC_exception_EX y PC_exception_ID, y sus bits de validez en valid_I_EX y valid_I_ID
-	-- Si no hay válidas se almacena el valor del PC.
+	-- Si no hay vï¿½lidas se almacena el valor del PC.
 	Return_I	<= 	PC_exception_EX when (valid_I_EX = '1') else 	
 					PC_exception_ID when (valid_I_ID = '1') else
 					PC_out;		
 	------------------------------------------------------------------------------------	
-	-- Exception_LR: almacena la dirección a la que hay que retornar tras una excepción	 
-	-- Vamos a guardar la dirección seleccionada en el MUX de arriba
+	-- Exception_LR: almacena la direcciï¿½n a la que hay que retornar tras una excepciï¿½n	 
+	-- Vamos a guardar la direcciï¿½n seleccionada en el MUX de arriba
 	Exception_LR: reg generic map (size => 32)
 			port map (	Din => Return_I, clk => clk, reset => reset, load => Exception_accepted, Dout => Exception_LR_output);
 	
@@ -365,25 +365,25 @@ begin
 	
 	------------------------------------------------------------------------------------
 	-- Completar:
-	-- load_pc vale '1' porque en la versión actual el procesador no para nunca
-	-- Si queremos detener una instrucción en la etapa fetch habrá que ponerlo a '0'
-	-- Si paramos en ID, también hay que parar en IF. Parar_ID nos avisa de esto.
-	-- Importante: Puede ser que Parar_ID se active, y a la vez se procese una excepción: ¿hay que actualizar el pc?
-	load_PC <= (Parar_ID = '0') OR (IRQ = '1' AND IRQ_Disable = '0');
+	-- load_pc vale '1' porque en la versiï¿½n actual el procesador no para nunca
+	-- Si queremos detener una instrucciï¿½n en la etapa fetch habrï¿½ que ponerlo a '0'
+	-- Si paramos en ID, tambiï¿½n hay que parar en IF. Parar_ID nos avisa de esto.
+	-- Importante: Puede ser que Parar_ID se active, y a la vez se procese una excepciï¿½n: ï¿½hay que actualizar el pc?
+	load_PC <= (Parar_ID = '0') OR (IRQ = '1' AND MIPS_status(1)='1');
 	-- Fin completar;
 	------------------------------------------------------------------------------------
 	------------------------------------------------------------------------------------
-	 -- la x en x"00000004" indica que está en hexadecimal
+	 -- la x en x"00000004" indica que estï¿½ en hexadecimal
 	adder_4: adder32 port map (Din0 => PC_out, Din1 => x"00000004", Dout => PC4);
 	------------------------------------------------------------------------------------
-	-- Completar: sustituir los (--completar) por la condición correcta y descomentar el código. Ver ejemplo para el data abort.
-	-- Este código es el mux de entrada al PC: elige entre PC+4, la dirección de salto generada en ID, la dirección de la rutina de tratamiento de la excepción, o la dirección de retorno de la excepción
-	-- El orden asigna prioridad si se cumplen dos o más condiciones			
+	-- Completar: sustituir los (--completar) por la condiciï¿½n correcta y descomentar el cï¿½digo. Ver ejemplo para el data abort.
+	-- Este cï¿½digo es el mux de entrada al PC: elige entre PC+4, la direcciï¿½n de salto generada en ID, la direcciï¿½n de la rutina de tratamiento de la excepciï¿½n, o la direcciï¿½n de retorno de la excepciï¿½n
+	-- El orden asigna prioridad si se cumplen dos o mï¿½s condiciones			
 	
-	PC_in <= 	x"00000008" 		when (Exception_accepted = '1') and (Data_abort = '1') else -- Si llega un data abort y está habilitado saltamos a la dirección 0x00000008
-				x"0000000C" 		when (UNDEF = '1') else -- Si llega un UNDEF saltamos a la dirección 0x0000000C
-				x"00000004" 		when (Data_abort = '1') else -- Si llega un data abort saltamos a la dirección 0x00000008
-				Exception_LR_output when (RTE = '1') else 	--@ retorno. Si es una RTE volvemos a la @ que teníamos almacenada en el Exception_LR		
+	PC_in <= 	x"00000008" 		when (Exception_accepted = '1') and (Data_abort = '1') else -- Si llega un data abort y estï¿½ habilitado saltamos a la direcciï¿½n 0x00000008
+				x"0000000C" 		when (UNDEF = '1') else -- Si llega un UNDEF saltamos a la direcciï¿½n 0x0000000C
+				x"00000004" 		when (Data_abort = '1') else -- Si llega un data abort saltamos a la direcciï¿½n 0x00000008
+				Exception_LR_output when (RTE = '1') else 	--@ retorno. Si es una RTE volvemos a la @ que tenï¿½amos almacenada en el Exception_LR		
 				Dirsalto_ID 		when (salto_tomado = '1') else --@ Salto 
 				PC4; -- PC+4
 				
@@ -392,11 +392,11 @@ begin
 	-- Memoria de instrucciones. Tiene el puerto de escritura inhabilitado (WE='0')
 	Mem_I: memoriaRAM_I PORT MAP (CLK => CLK, ADDR => PC_out, Din => x"00000000", WE => '0', RE => '1', Dout => IR_in);
 	------------------------------------------------------------------------------------
-	-- Reset del banco ID: reseteamos el banco si hay una excepción aceptada, ya que en ese caso se matan las intrucciones en IF, ID y EX 
+	-- Reset del banco ID: reseteamos el banco si hay una excepciï¿½n aceptada, ya que en ese caso se matan las intrucciones en IF, ID y EX 
 	reset_ID <= (reset or Exception_accepted);
 	
 	--------------------------------------------------------------
-	-- anulación de la instrucción. Si en ID se detecta que la instrucción de IF no debe ejecutarse se desactiva la señal valid_I_IF
+	-- anulaciï¿½n de la instrucciï¿½n. Si en ID se detecta que la instrucciï¿½n de IF no debe ejecutarse se desactiva la seï¿½al valid_I_IF
 	valid_I_IF <= not(kill_IF);
 	-----------------------------------------------------------------
 	-- Para detener la etapa ID 
@@ -413,7 +413,7 @@ begin
 	--------------------------------------------------
 	-- BANCOS DE REGISTROS
 	
-	-- sólo se escribe si la instrucción en WB es válida
+	-- sï¿½lo se escribe si la instrucciï¿½n en WB es vï¿½lida
 	RegWrite <= RegWrite_WB and valid_I_WB;
 	
 	INT_Register_bank: BReg PORT MAP (clk => clk, reset => reset, RA => Reg_Rs_ID, RB => Reg_Rt_ID, RW => RW_WB, BusW => BusW, RegWrite => RegWrite, BusA => BusA, BusB => BusB);
@@ -430,10 +430,10 @@ begin
 	-------------------------------------------------------------------------------------
 	IR_op_code <= IR_ID(31 downto 26);
 	
-	-- Si la Instrucción en ID no es válida, todas las señales son 0
+	-- Si la Instrucciï¿½n en ID no es vï¿½lida, todas las seï¿½ales son 0
 	UC_seg: UC port map (valid_I_ID => valid_I_ID, IR_op_code => IR_op_code, Branch => Branch_ID, RegDst => RegDst_ID,  ALUSrc => ALUSrc_ID, MemWrite => MemWrite_ID,  
 								MemRead => MemRead_ID, MemtoReg => MemtoReg_ID, RegWrite => RegWrite_ID, 
-								--Señales nuevas
+								--Seï¿½ales nuevas
 								-- RTE
 								RTE => RTE_ID,
 								-- Write_output
@@ -442,43 +442,43 @@ begin
 	
 	------------------------------------------------------------------------------------
 	-- Completar:
-	-- Write_output da la orden de escribir en el registro de salida. ¡Cuidado, no se deben escribir datos equivocados!
+	-- Write_output da la orden de escribir en el registro de salida. ï¿½Cuidado, no se deben escribir datos equivocados!
 	-- IMPORTANTE: si hay dependencias de datos no hay que escribir en la salida
-	-- Añadid lo necesario para evitar escrituras incorrectas
+	-- Aï¿½adid lo necesario para evitar escrituras incorrectas
 	Write_output <= write_output_UC;			
 	-- Fin completar;
 	------------------------------------------------------------------------------------							
-	-- Salto tomado se debe activar cada vez que la instrucción en D produzca un salto en la ejecución.
+	-- Salto tomado se debe activar cada vez que la instrucciï¿½n en D produzca un salto en la ejecuciï¿½n.
 	-- Eso incluye los saltos tomados en los BEQs (Z AND Branch_ID) y los saltos debidos a una RTE
-	-- IMPORTANTE: si la instrucción no es válida no se salta
+	-- IMPORTANTE: si la instrucciï¿½n no es vï¿½lida no se salta
 	salto_tomado <= ((Z AND Branch_ID) or RTE_ID) AND valid_I_ID;
 								
-	------------------------Unidad de detención-----------------------------------
-	-- Debéis completar la unidad para que genere las siguientes señales correctamente:
-	-- Kill_IF: mata la instrucción que se está leyendo en la etapa IF (para que no se ejecute)
-	-- parar_ID: detiene la ejecución de las etpas ID e IF cuando hay riesgos
-	-- parar_EX: se utiliza para parar las etapas IF, ID y EX cuando la memoria no puede realizar la operación solicitada en el ciclo actual (es decir cuando Mem_ready es 0). En el primer proyecto no hace flata parar.
-	-- IMPORTANTE: para detectar un riesgo, primero comprobar que las instrucciones implicadas son válidas. ¡Las instrucciones invalidas no generan riesgos porque no son instrucciones que se vayan a ejecutar
+	------------------------Unidad de detenciï¿½n-----------------------------------
+	-- Debï¿½is completar la unidad para que genere las siguientes seï¿½ales correctamente:
+	-- Kill_IF: mata la instrucciï¿½n que se estï¿½ leyendo en la etapa IF (para que no se ejecute)
+	-- parar_ID: detiene la ejecuciï¿½n de las etpas ID e IF cuando hay riesgos
+	-- parar_EX: se utiliza para parar las etapas IF, ID y EX cuando la memoria no puede realizar la operaciï¿½n solicitada en el ciclo actual (es decir cuando Mem_ready es 0). En el primer proyecto no hace flata parar.
+	-- IMPORTANTE: para detectar un riesgo, primero comprobar que las instrucciones implicadas son vï¿½lidas. ï¿½Las instrucciones invalidas no generan riesgos porque no son instrucciones que se vayan a ejecutar
 	-------------------------------------------------------------------------------------
 	
-	Unidad_detención_riesgos: UD port map (	valid_I_ID => valid_I_ID, valid_I_EX => valid_I_EX, valid_I_MEM => valid_I_MEM, Reg_Rs_ID => Reg_Rs_ID, Reg_Rt_ID => Reg_Rt_ID, MemRead_EX => MemRead_EX, RW_EX => RW_EX, RegWrite_EX => RegWrite_EX,
+	Unidad_detenciï¿½n_riesgos: UD port map (	valid_I_ID => valid_I_ID, valid_I_EX => valid_I_EX, valid_I_MEM => valid_I_MEM, Reg_Rs_ID => Reg_Rs_ID, Reg_Rt_ID => Reg_Rt_ID, MemRead_EX => MemRead_EX, RW_EX => RW_EX, RegWrite_EX => RegWrite_EX,
 											RW_Mem => RW_Mem, RegWrite_Mem => RegWrite_Mem, IR_op_code => IR_op_code, salto_tomado => salto_tomado,
 											kill_IF => kill_IF, parar_ID => parar_ID,
 											Mem_ready => Mem_ready, parar_EX => parar_EX);
 								
-	-- Si nos paran en ID marcamos como invalida la instrucción que mandamos a la etapa EX
-	-- La instrucción de EX será válida el próximo ciclo, si lo es la de ID y no hay detención
+	-- Si nos paran en ID marcamos como invalida la instrucciï¿½n que mandamos a la etapa EX
+	-- La instrucciï¿½n de EX serï¿½ vï¿½lida el prï¿½ximo ciclo, si lo es la de ID y no hay detenciï¿½n
 	
 	valid_I_EX_in	<=  valid_I_ID and not( parar_ID);				
 				
 	-------------------------------------------------------------------------------------
-	-- si la operación es aritmética (es decir: IR_op_code= "000001") miro el campo funct
-	-- como sólo hay 4 operaciones en la alu, basta con los bits menos significativos del campo func de la instrucción	
-	-- si no es aritmética le damos el valor de la suma (000)
+	-- si la operaciï¿½n es aritmï¿½tica (es decir: IR_op_code= "000001") miro el campo funct
+	-- como sï¿½lo hay 4 operaciones en la alu, basta con los bits menos significativos del campo func de la instrucciï¿½n	
+	-- si no es aritmï¿½tica le damos el valor de la suma (000)
 	ALUctrl_ID <= IR_ID(2 downto 0) when IR_op_code= ARIT else "000"; 
 	
 	
-	-- Reset del banco EX: reseteamos el banco si hay una excepción aceptada, ya que en ese caso se matan las intrucciones en IF, ID y EX
+	-- Reset del banco EX: reseteamos el banco si hay una excepciï¿½n aceptada, ya que en ese caso se matan las intrucciones en IF, ID y EX
 	reset_EX <= (reset or Exception_accepted);
 	-- Banco ID/EX parte de enteros
 	load_EX <= not(parar_EX);
@@ -486,7 +486,7 @@ begin
 						RegDst_ID => RegDst_ID, ALUSrc_ID => ALUSrc_ID, MemWrite_ID => MemWrite_ID, MemRead_ID => MemRead_ID,
 						MemtoReg_ID => MemtoReg_ID, RegWrite_ID => RegWrite_ID, RegDst_EX => RegDst_EX, ALUSrc_EX => ALUSrc_EX,
 						MemWrite_EX => MemWrite_EX, MemRead_EX => MemRead_EX, MemtoReg_EX => MemtoReg_EX, RegWrite_EX => RegWrite_EX,
-						-- Nuevo (para la anticipación)
+						-- Nuevo (para la anticipaciï¿½n)
 						Reg_Rs_ID => Reg_Rs_ID,
 						Reg_Rs_EX => Reg_Rs_EX,
 						--Fin nuevo
@@ -498,13 +498,13 @@ begin
 	
 	------------------------------------------Etapa EX-------------------------------------------------------------------
 	---------------------------------------------------------------------------------
-	-- Unidad de anticipación de enteros incompleta. Debéis diseñadla teniendo en cuenta que instrucciones lee y escribe cada instrucción
+	-- Unidad de anticipaciï¿½n de enteros incompleta. Debï¿½is diseï¿½adla teniendo en cuenta que instrucciones lee y escribe cada instrucciï¿½n
 	-- Entradas: Reg_Rs_EX, Reg_Rt_EX, RegWrite_MEM, RW_MEM, RegWrite_WB, RW_WB
 	-- Salidas: MUX_ctrl_A, MUX_ctrl_B
 	Unidad_Ant_INT: UA port map (	valid_I_MEM => valid_I_MEM, valid_I_WB => valid_I_WB, Reg_Rs_EX => Reg_Rs_EX, Reg_Rt_EX => Reg_Rt_EX, RegWrite_MEM => RegWrite_MEM,
 									RW_MEM => RW_MEM, RegWrite_WB => RegWrite_WB, RW_WB => RW_WB, MUX_ctrl_A => MUX_ctrl_A, MUX_ctrl_B => MUX_ctrl_B);
 	---------------------------------------------------------------------------------
-	-- Muxes para la anticipación
+	-- Muxes para la anticipaciï¿½n
 	Mux_A: mux4_1_32bits port map  ( DIn0 => BusA_EX, DIn1 => ALU_out_MEM, DIn2 => busW, DIn3 => x"00000000", ctrl => MUX_ctrl_A, Dout => Mux_A_out);
 	Mux_B: mux4_1_32bits port map  ( DIn0 => BusB_EX, DIn1 => ALU_out_MEM, DIn2 => busW, DIn3 => x"00000000", ctrl => MUX_ctrl_B, Dout => Mux_B_out);
 	
@@ -518,15 +518,15 @@ begin
 	
 	mux_dst: mux2_5bits port map (Din0 => Reg_Rt_EX, DIn1 => Reg_Rd_EX, ctrl => RegDst_EX, Dout => RW_EX);
 	
-	-- No reseteamos el banco si hay una excepción porque podría llegar a mitad de una transferencia y corromper la MC 
+	-- No reseteamos el banco si hay una excepciï¿½n porque podrï¿½a llegar a mitad de una transferencia y corromper la MC 
 	reset_MEM <= (reset);
-	--si paramos en EX no hay que cargar una instrucción nueva en la etap MEM
+	--si paramos en EX no hay que cargar una instrucciï¿½n nueva en la etap MEM
 	load_MEM <= not(parar_EX);
 	Banco_EX_MEM: Banco_MEM PORT MAP ( ALU_out_EX => ALU_out_EX, ALU_out_MEM => ALU_out_MEM, clk => clk, reset => reset_MEM, load => load_MEM, MemWrite_EX => MemWrite_EX,
 													MemRead_EX => MemRead_EX, MemtoReg_EX => MemtoReg_EX, RegWrite_EX => RegWrite_EX, MemWrite_MEM => MemWrite_MEM, MemRead_MEM => MemRead_MEM,
 													MemtoReg_MEM => MemtoReg_MEM, RegWrite_MEM => RegWrite_MEM, 
 													--sol:
-													BusB_EX => Mux_B_out, -- antes ponía BusB_EX, pero entonces los sw no podían hacer cortos en rt
+													BusB_EX => Mux_B_out, -- antes ponï¿½a BusB_EX, pero entonces los sw no podï¿½an hacer cortos en rt
 													--fin sol
 													BusB_MEM => BusB_MEM, RW_EX => RW_EX, RW_MEM => RW_MEM,
 													-- Nuevo
@@ -538,14 +538,14 @@ begin
 	------------------------------------------Etapa MEM-------------------------------------------------------------------
 	--
 	
-	WE <= MemWrite_MEM and valid_I_MEM; --sólo se escribe si es una instrucción válida
-	RE <= MemRead_MEM and valid_I_MEM; --sólo se lee si es una instrucción válida
+	WE <= MemWrite_MEM and valid_I_MEM; --sï¿½lo se escribe si es una instrucciï¿½n vï¿½lida
+	RE <= MemRead_MEM and valid_I_MEM; --sï¿½lo se lee si es una instrucciï¿½n vï¿½lida
 	
 	Mem_D: Data_Memory_Subsystem PORT MAP (CLK => CLK, ADDR => ALU_out_MEM, Din => BusB_MEM, WE => MemWrite_MEM, RE => MemRead_MEM, reset => reset, IO_input => IO_input, Mem_ready => Mem_ready, Dout => Mem_out, Data_abort => Data_abort);
 
 	
-	-- parar_EX indica que hay que detener la etapa de memoria (se usa más adelante cuando la jerarquía de memoria sea más compleja)
-	-- La instrucción en WB será válida el próximo ciclo si la instrucción en Mem es válida y no hay que parar 
+	-- parar_EX indica que hay que detener la etapa de memoria (se usa mï¿½s adelante cuando la jerarquï¿½a de memoria sea mï¿½s compleja)
+	-- La instrucciï¿½n en WB serï¿½ vï¿½lida el prï¿½ximo ciclo si la instrucciï¿½n en Mem es vï¿½lida y no hay que parar 
 	valid_I_WB_in <= valid_I_MEM and not(parar_EX);
 	
 	Banco_MEM_WB: Banco_WB PORT MAP ( 	ALU_out_MEM => ALU_out_MEM, ALU_out_WB => ALU_out_WB, Mem_out => Mem_out, MDR => MDR, clk => clk, reset => reset, load => '1', 
@@ -561,7 +561,7 @@ begin
 	
 -- *********************************************************************************************	-----------
 	-- IO_output son 32 pines de salida para que el MIPS pueda comunicarse con el exterior
-	-- En la etapa ID de la instrucción WRO Rs el contenido de Rs se carga en el registro de salida que se puede ver desde el exterior
+	-- En la etapa ID de la instrucciï¿½n WRO Rs el contenido de Rs se carga en el registro de salida que se puede ver desde el exterior
 	output_reg: reg generic map (size => 32)
 				port map (	Din => BusA, clk => clk, reset => reset, load => write_output, Dout => IO_output);
 --------------------------------------------------------------------------------------------------
@@ -579,7 +579,7 @@ begin
 	-- Contador de detenciones por riesgos de control							
 	cont_control_stalls: counter generic map (size => 8)
 							port map (clk => clk, reset => reset, count_enable => inc_control_stalls, count => control_stalls);
-	-- Contador de número de excepciones							
+	-- Contador de nï¿½mero de excepciones							
 	cont_Exceptions: counter 		generic map (size => 8)
 							port map (clk => clk, reset => reset, count_enable => inc_Exceptions, count => Exceptions);
 	-- Contador de ciclos ejecutando excepciones						
