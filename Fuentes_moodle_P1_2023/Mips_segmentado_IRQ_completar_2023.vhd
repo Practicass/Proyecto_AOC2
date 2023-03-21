@@ -445,7 +445,7 @@ begin
 	-- Write_output da la orden de escribir en el registro de salida. �Cuidado, no se deben escribir datos equivocados!
 	-- IMPORTANTE: si hay dependencias de datos no hay que escribir en la salida
 	-- A�adid lo necesario para evitar escrituras incorrectas
-	Write_output <= write_output_UC;			
+	Write_output <= write_output_UC = '1' and RegWrite = '1';			
 	-- Fin completar;
 	------------------------------------------------------------------------------------							
 	-- Salto tomado se debe activar cada vez que la instrucci�n en D produzca un salto en la ejecuci�n.
@@ -471,6 +471,8 @@ begin
 	
 	valid_I_EX_in	<=  valid_I_ID and not( parar_ID);				
 				
+
+
 	-------------------------------------------------------------------------------------
 	-- si la operaci�n es aritm�tica (es decir: IR_op_code= "000001") miro el campo funct
 	-- como s�lo hay 4 operaciones en la alu, basta con los bits menos significativos del campo func de la instrucci�n	
@@ -588,11 +590,11 @@ begin
 	------------------------------------------------------------------------------------
 	-- Completar:
 	inc_cycles <= '1';--Done
-	inc_I <= '0'; --completar
-	inc_data_stalls <= '0'; --completar
-	inc_control_stalls <= '0'; --completar
-	inc_Exceptions <= '0';--completar
-	inc_Exception_cycles <= '0';	--completar	
+	inc_I <= ; --completar instrucciones ejecutadas
+	inc_data_stalls <= ; --completar detenciones de riesgo de datos
+	inc_control_stalls <= ; --completar  detenciones de riesgo de control
+	inc_Exceptions <= ;--completar numero de excepciones
+	inc_Exception_cycles <= ;	--completar	ciclos ejecutando excepciones
 	-- Fin completar;
 	------------------------------------------------------------------------------------			
 end Behavioral;

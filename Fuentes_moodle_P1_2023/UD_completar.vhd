@@ -3,9 +3,9 @@ use IEEE.STD_LOGIC_1164.ALL;
 --Mux 4 a 1
 entity UD is
     Port ( 	
-			valid_I_ID : in  STD_LOGIC; --indica si es una instrucción de ID es válida
-			valid_I_EX : in  STD_LOGIC; --indica si es una instrucción de EX es válida
-			valid_I_MEM : in  STD_LOGIC; --indica si es una instrucción de MEM es válida
+			valid_I_ID : in  STD_LOGIC; --indica si es una instrucciï¿½n de ID es vï¿½lida
+			valid_I_EX : in  STD_LOGIC; --indica si es una instrucciï¿½n de EX es vï¿½lida
+			valid_I_MEM : in  STD_LOGIC; --indica si es una instrucciï¿½n de MEM es vï¿½lida
     		Reg_Rs_ID: in  STD_LOGIC_VECTOR (4 downto 0); --registros Rs y Rt en la etapa ID
 		  	Reg_Rt_ID	: in  STD_LOGIC_VECTOR (4 downto 0);
 			MemRead_EX	: in std_logic; -- informaciÃ³n sobre la instrucciÃ³n en EX (destino, si lee de memoria y si escribe en registro)
@@ -16,9 +16,9 @@ entity UD is
 			IR_op_code	: in  STD_LOGIC_VECTOR (5 downto 0); -- cÃ³digo de operaciÃ³n de la instrucciÃ³n en IEEE
          	salto_tomado			: in std_logic; -- 1 cuando se produce un salto 0 en caso contrario
          	--Nuevo
-         	Mem_ready: in std_logic; -- 1 cuando la memoria puede realizar la operación solicitada en el ciclo actual
+         	Mem_ready: in std_logic; -- 1 cuando la memoria puede realizar la operaciï¿½n solicitada en el ciclo actual
 			parar_EX: out  STD_LOGIC; -- Indica que las etapas EX y previas deben parar
-         	Kill_IF		: out  STD_LOGIC; -- Indica que la instrucción en IF no debe ejecutarse (fallo en la predicción de salto tomado)
+         	Kill_IF		: out  STD_LOGIC; -- Indica que la instrucciï¿½n en IF no debe ejecutarse (fallo en la predicciï¿½n de salto tomado)
 			Parar_ID		: out  STD_LOGIC -- Indica que las etapas ID y previas deben parar
 			); 
 end UD;
@@ -32,57 +32,57 @@ CONSTANT WRO_opcode : STD_LOGIC_VECTOR (5 downto 0) := "100000";
 begin
 -------------------------------------------------------------------------------------------------------------------------------
 -- Kill_IF:
--- da la orden de matar la instrucción que se ha leído en Fetch
--- Se debe activar cada vez que se salte (entrada salto_tomado), ya que por defecto se ha hecho el fetch de la instrucción siguiente al salto y si se salta no hay que ejecutarla
+-- da la orden de matar la instrucciï¿½n que se ha leï¿½do en Fetch
+-- Se debe activar cada vez que se salte (entrada salto_tomado), ya que por defecto se ha hecho el fetch de la instrucciï¿½n siguiente al salto y si se salta no hay que ejecutarla
 -- IMPORTANTE: 
 -- 	* si un beq no tiene sus operandos disponibles no sabe si debe saltar o no. Da igual lo que diga salto tomado, ya que se ha calculado con datos incorrectos
--- 	* si la instrucción que hay en ID no es válida hay que ignorarla cuando si nos dice que va a saltar (igual que si nos dice cualuier otra cosa), sólo hacmeos caso a las instrucciones válidas
+-- 	* si la instrucciï¿½n que hay en ID no es vï¿½lida hay que ignorarla cuando si nos dice que va a saltar (igual que si nos dice cualuier otra cosa), sï¿½lo hacmeos caso a las instrucciones vï¿½lidas
 -- Completar: activar Kill_IF cuando proceda
-	Kill_IF <= '0';
+	Kill_IF <= (salto_tomado = '1' and valid_I_ID = '1') or (IR_op_code = BEQ and (MemRead_Ex = '1' and ((RegWrite_EX = Reg_Rs_ID or  RegWrite_EX = Reg_Rt_ID) or (MemRead_Mem = '1' and RegWrite_Mem = Reg_Rs_ID or RegWrite_Mem = Reg_Rt_ID)));--no tiene operandos 
 -------------------------------------------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------------------------------------------------
--- Detección de dependencias de datos:	
--- El código incluye un ejemplo: dep_rs_EX. Debéis completar el resto de opciones.	
+-- Detecciï¿½n de dependencias de datos:	
+-- El cï¿½digo incluye un ejemplo: dep_rs_EX. Debï¿½is completar el resto de opciones.	
 	
 	-- dep_rs_EX: la I en EX escribe en el registro rs y la I en ID usa rs (es decir no es un NOP ni RTE)
 	dep_rs_EX 	<= 	'1' when ((valid_I_EX = '1') AND (Reg_Rs_ID = RW_EX) and (RegWrite_EX = '1') and (IR_op_code /= NOP) and (IR_op_code /= RTE_opcode))	else '0';
 								
 	------------------------------------------------------------------------------------
-	-- Completar. Falta la lógica que genera el valor correcto de estas señales.
+	-- Completar. Falta la lï¿½gica que genera el valor correcto de estas seï¿½ales.
 	-- dep_rs_Mem: 
-	dep_rs_Mem	<= 	'0';
+	dep_rs_Mem	<= 	'1' when ((valid_I_MEM = '1') AND (Reg_Rs_ID = RW_Mem) and (RegWrite_Mem = '1') and (IR_op_code /= NOP) and (IR_op_code /= RTE_opcode)) else '0';
 							
 	-- dep_rt_EX: 
-	dep_rt_EX	<= 	'0';
+	dep_rt_EX	<= 	'1' when ((valid_I_EX = '1') AND (Reg_Rt_ID = RW_EX) and (RegWrite_EX = '1') and (IR_op_code /= NOP) and (IR_op_code /= RTE_opcode)) else '0';
 								
 	-- dep_rt_Mem:
-	dep_rt_Mem	<= 	'0';
+	dep_rt_Mem	<= 	'1' when ((valid_I_MEM = '1') AND (Reg_Rt_ID = RW_Mem) and (RegWrite_Mem = '1') and (IR_op_code /= NOP) and (IR_op_code /= RTE_opcode)) else '0';
 -------------------------------------------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------------------------------------------------
 -- Riesgos de datos:
-	-- 1) lw_uso: Si hay dependencia y la instrucción en EX es lw tenemos un lw_uso
-	ld_uso_rs <= 	'0';
-	ld_uso_rt <= 	'0';
+	-- 1) lw_uso: Si hay dependencia y la instrucciï¿½n en EX es lw tenemos un lw_uso
+	ld_uso_rs <= 	dep_rs_EX;
+	ld_uso_rt <= 	dep_rt_EX;
 									
 	-- 2) BEQ: si hay dependencias y la I en ID es un BEQ es un riesgo porque el BEQ lee los datos en ID, y no tenemos red de cortos en esa etapa
-	BEQ_rs	<= 	'0';
-	BEQ_rt	<= 	'0';
+	BEQ_rs	<= 	dep_rs_EX and dep_rs_Mem;
+	BEQ_rt	<= 	dep_rt_EX and dep_rt_Mem;
 		
-	-- 3) WRO: Dependencia similar al BEQ, pero hay que tener en cuenta que WRO sólo usa Rs
+	-- 3) WRO: Dependencia similar al BEQ, pero hay que tener en cuenta que WRO sï¿½lo usa Rs
 	
-	WRO_rs	<= 	'0';
+	WRO_rs	<= 	dep_rs_EX and dep_rs_Mem;
 	
 	-- Si se cumple alguna de las condiciones de riesgo de datos se detienen las etapas IF e ID
 	riesgo_datos_ID <= BEQ_rt OR BEQ_rs OR ld_uso_rs OR ld_uso_rt OR WRO_rs;
-	-- IMPORTANTE: sólo hay riesgos de datos si la instrucción en ID es válida
-	-- Si se da la orden de parar EX, también hay que parar ID. En el proyecto 1 no hace falta, pero lo ponemos para no tener que tocarlo luego
+	-- IMPORTANTE: sï¿½lo hay riesgos de datos si la instrucciï¿½n en ID es vï¿½lida
+	-- Si se da la orden de parar EX, tambiï¿½n hay que parar ID. En el proyecto 1 no hace falta, pero lo ponemos para no tener que tocarlo luego
 	Parar_ID <= parar_EX_internal or (valid_I_ID and riesgo_datos_ID);
 -------------------------------------------------------------------------------------------------------------------------------
 -- Parar_EX:
--- NOTA: en el proyecto 1, no hace falta parar nunca en EX porque la memoria siempre está preparada para hacer lo que le pidas
--- En el P2, habrá que mirar Mem_ready y si no puede hacer lo que le has pedido (Mem_ready = '0') parar la etapa EX y las anteriores
--- parar_EX_internal se define para poder leerla en el código (en vhdl las salidas de una entidad no se pueden leer dentro de la entidad. 
--- Depende de cómo lo hagáis es necesaria o no
+-- NOTA: en el proyecto 1, no hace falta parar nunca en EX porque la memoria siempre estï¿½ preparada para hacer lo que le pidas
+-- En el P2, habrï¿½ que mirar Mem_ready y si no puede hacer lo que le has pedido (Mem_ready = '0') parar la etapa EX y las anteriores
+-- parar_EX_internal se define para poder leerla en el cï¿½digo (en vhdl las salidas de una entidad no se pueden leer dentro de la entidad. 
+-- Depende de cï¿½mo lo hagï¿½is es necesaria o no
 
 	parar_EX_internal <= '0';
 	parar_EX <= parar_EX_internal;

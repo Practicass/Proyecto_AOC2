@@ -13,8 +13,8 @@ use IEEE.STD_LOGIC_1164.ALL;
 -- MUX_ctrl_B
 entity UA is
 	Port(
-			valid_I_MEM : in  STD_LOGIC; --indica si es una instrucción de MEM es válida
-			valid_I_WB : in  STD_LOGIC; --indica si es una instrucción de WB es válida
+			valid_I_MEM : in  STD_LOGIC; --indica si es una instrucciï¿½n de MEM es vï¿½lida
+			valid_I_WB : in  STD_LOGIC; --indica si es una instrucciï¿½n de WB es vï¿½lida
 			Reg_Rs_EX: IN  std_logic_vector(4 downto 0); 
 			Reg_Rt_EX: IN  std_logic_vector(4 downto 0);
 			RegWrite_MEM: IN std_logic;
@@ -31,20 +31,23 @@ signal Corto_A_Mem, Corto_B_Mem, Corto_A_WB, Corto_B_WB: std_logic;
 begin
 
 
--- Diseño incompleto. Os lo ponemos cómo ejemplo. Debéis completarlo vosotros
--- Activamos la señal corto_A_Mem, cuand detectamos que el operando almacenado en A (Rs) es el mismo en el que va a escribir la instrucción que está en la etapa Mem
--- Importante: sólo activamos el corto si la instrucción de la etapa MEM en válida
+-- Diseï¿½o incompleto. Os lo ponemos cï¿½mo ejemplo. Debï¿½is completarlo vosotros
+-- Activamos la seï¿½al corto_A_Mem, cuand detectamos que el operando almacenado en A (Rs) es el mismo en el que va a escribir la instrucciï¿½n que estï¿½ en la etapa Mem
+-- Importante: sï¿½lo activamos el corto si la instrucciï¿½n de la etapa MEM en vï¿½lida
 Corto_A_Mem <= '1' when ((Reg_Rs_EX = RW_MEM) and (RegWrite_MEM = '1') and (valid_I_MEM = '1'))	else '0';
 -- Resto de cortos:
-Corto_B_Mem <= '0';
-Corto_A_WB	<= '0';
-Corto_B_WB	<= '0';
--- Con las señales anteriores se elige la entrada de los muxes:
+Corto_B_Mem <= '1' when ((Reg_Rt_EX = RW_MEM) and (RegWrite_MEM = '1') and (valid_I_MEM = '1'))	else '0';
+Corto_A_WB	<= '1' when ((Reg_Rs_EX = RW_WB) and (RegWrite_WB = '1') and (valid_I_WB = '1'))	else '0';
+Corto_B_WB	<= '1' when ((Reg_Rt_EX = RW_WB) and (RegWrite_WB = '1') and (valid_I_WB = '1'))	else '0';
+-- Con las seï¿½ales anteriores se elige la entrada de los muxes:
 -- entrada 00: se corresponde al dato del banco de registros
 -- entrada 01: dato de la etapa Mem
 -- entrada 10: dato de la etapa WB
--- Ponemos un ejemplo para el Corto_A_Mem. Debéis completarlo
+-- Ponemos un ejemplo para el Corto_A_Mem. Debï¿½is completarlo
 MUX_ctrl_A <= 	"01" when (Corto_A_Mem = '1') else
+				"10" when (Corto_A_WB = '1') else
 				"00";
-MUX_ctrl_B <= 	"00";	
+MUX_ctrl_B <= 	"01" when (Corto_B_Mem = '1') else
+				"10" when (Corto_B_WB = '1')  else
+				"00";	
 end Behavioral;
