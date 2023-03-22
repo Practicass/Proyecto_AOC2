@@ -38,7 +38,8 @@ begin
 -- 	* si un beq no tiene sus operandos disponibles no sabe si debe saltar o no. Da igual lo que diga salto tomado, ya que se ha calculado con datos incorrectos
 -- 	* si la instrucci�n que hay en ID no es v�lida hay que ignorarla cuando si nos dice que va a saltar (igual que si nos dice cualuier otra cosa), s�lo hacmeos caso a las instrucciones v�lidas
 -- Completar: activar Kill_IF cuando proceda
-	Kill_IF <= (salto_tomado = '1' and valid_I_ID = '1') or (IR_op_code = BEQ and (MemRead_Ex = '1' and ((RegWrite_EX = Reg_Rs_ID or  RegWrite_EX = Reg_Rt_ID) or (MemRead_Mem = '1' and RegWrite_Mem = Reg_Rs_ID or RegWrite_Mem = Reg_Rt_ID)));--no tiene operandos 
+	Kill_IF <= '1' when (salto_tomado = '1' and valid_I_ID ='1') or ((IR_op_code = BEQ) and (((RegWrite_EX ='1') and (RW_EX = Reg_Rs_ID or  RW_EX = Reg_Rt_ID)) or (RegWrite_Mem = '1' and (RW_MEM = Reg_Rs_ID or RW_MEM = Reg_Rt_ID)))) else '0';
+	--Kill_IF <= (salto_tomado = '1' and valid_I_ID ='1') or ((IR_op_code = BEQ) and (((RegWrite_EX ='1') and (RW_EX = Reg_Rs_ID or  RW_EX = Reg_Rt_ID)) or (RegWrite_Mem = '1' and (RW_MEM = Reg_Rs_ID or RW_MEM = Reg_Rt_ID))));--no tiene operandos 
 -------------------------------------------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------------------------------------------------
 -- Detecci�n de dependencias de datos:	

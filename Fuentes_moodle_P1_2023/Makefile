@@ -4,7 +4,7 @@
 # /usr/bin/ghdl-llvm --gen-makefile --ieee=synopsys -fexplicit --workdir=WORK testbench
 
 GHDL=/usr/bin/ghdl-llvm
-GHDLFLAGS= --ieee=synopsys -fexplicit --workdir=WORK
+GHDLFLAGS= --ieee=synopsys --workdir=WORK
 
 # Default target
 all: testbench

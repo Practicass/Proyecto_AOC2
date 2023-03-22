@@ -330,10 +330,11 @@ begin
 			port map (	Din => status_input, clk => clk, reset => reset, load => update_status, Dout => MIPS_status);
 	------------------------------------------------------------------------------------
 	-- Completar: falta la l�gica que detecta cu�ndo se va a procesaruna excepci�n: cuando se recibe una de las se�ales (IRQ, Data_abort y Undef) y las excepciones est�n habilitadas (MIPS_status(1)='1')
-	Exception_accepted <= ((IRQ = '1' ) or (Data_Abort = '1') or (UNDEF = '1') ) and MIPS_status(1)='1';
+	Exception_accepted <= (IRQ or Data_Abort or UNDEF) and MIPS_status(1);
+	--((IRQ = '1' ) or (Data_Abort = '1') or (UNDEF = '1')) and (MIPS_status(1) = '1');
 	------------------------------------------------------------------------------------
 	-- Completar: falta la l�gica que gestiona update_status. Dise�adla.
-	update_status	<= Exception_accepted = '1' or RTE_ID = '1' ;
+	update_status	<= Exception_accepted or RTE_ID  ;
 	-- Fin completar;
 	------------------------------------------------------------------------------------
 				
@@ -369,7 +370,7 @@ begin
 	-- Si queremos detener una instrucci�n en la etapa fetch habr� que ponerlo a '0'
 	-- Si paramos en ID, tambi�n hay que parar en IF. Parar_ID nos avisa de esto.
 	-- Importante: Puede ser que Parar_ID se active, y a la vez se procese una excepci�n: �hay que actualizar el pc?
-	load_PC <= (Parar_ID = '0') OR (IRQ = '1' AND MIPS_status(1)='1');
+	load_PC <= Parar_ID OR (IRQ AND MIPS_status(1));
 	-- Fin completar;
 	------------------------------------------------------------------------------------
 	------------------------------------------------------------------------------------
@@ -383,7 +384,7 @@ begin
 	PC_in <= 	x"00000008" 		when (Exception_accepted = '1') and (Data_abort = '1') else -- Si llega un data abort y est� habilitado saltamos a la direcci�n 0x00000008
 				x"0000000C" 		when (UNDEF = '1') else -- Si llega un UNDEF saltamos a la direcci�n 0x0000000C
 				x"00000004" 		when (Data_abort = '1') else -- Si llega un data abort saltamos a la direcci�n 0x00000008
-				Exception_LR_output when (RTE = '1') else 	--@ retorno. Si es una RTE volvemos a la @ que ten�amos almacenada en el Exception_LR		
+				Exception_LR_output when (RTE_ID = '1' ) else 	--@ retorno. Si es una RTE volvemos a la @ que ten�amos almacenada en el Exception_LR		
 				Dirsalto_ID 		when (salto_tomado = '1') else --@ Salto 
 				PC4; -- PC+4
 				
@@ -445,7 +446,7 @@ begin
 	-- Write_output da la orden de escribir en el registro de salida. �Cuidado, no se deben escribir datos equivocados!
 	-- IMPORTANTE: si hay dependencias de datos no hay que escribir en la salida
 	-- A�adid lo necesario para evitar escrituras incorrectas
-	Write_output <= write_output_UC = '1' and RegWrite = '1';			
+	Write_output <= write_output_UC and RegWrite;			
 	-- Fin completar;
 	------------------------------------------------------------------------------------							
 	-- Salto tomado se debe activar cada vez que la instrucci�n en D produzca un salto en la ejecuci�n.
@@ -461,7 +462,7 @@ begin
 	-- IMPORTANTE: para detectar un riesgo, primero comprobar que las instrucciones implicadas son v�lidas. �Las instrucciones invalidas no generan riesgos porque no son instrucciones que se vayan a ejecutar
 	-------------------------------------------------------------------------------------
 	
-	Unidad_detenci�n_riesgos: UD port map (	valid_I_ID => valid_I_ID, valid_I_EX => valid_I_EX, valid_I_MEM => valid_I_MEM, Reg_Rs_ID => Reg_Rs_ID, Reg_Rt_ID => Reg_Rt_ID, MemRead_EX => MemRead_EX, RW_EX => RW_EX, RegWrite_EX => RegWrite_EX,
+	Unidad_detencion_riesgos: UD port map (	valid_I_ID => valid_I_ID, valid_I_EX => valid_I_EX, valid_I_MEM => valid_I_MEM, Reg_Rs_ID => Reg_Rs_ID, Reg_Rt_ID => Reg_Rt_ID, MemRead_EX => MemRead_EX, RW_EX => RW_EX, RegWrite_EX => RegWrite_EX,
 											RW_Mem => RW_Mem, RegWrite_Mem => RegWrite_Mem, IR_op_code => IR_op_code, salto_tomado => salto_tomado,
 											kill_IF => kill_IF, parar_ID => parar_ID,
 											Mem_ready => Mem_ready, parar_EX => parar_EX);
@@ -590,11 +591,11 @@ begin
 	------------------------------------------------------------------------------------
 	-- Completar:
 	inc_cycles <= '1';--Done
-	inc_I <= ; --completar instrucciones ejecutadas
-	inc_data_stalls <= ; --completar detenciones de riesgo de datos
-	inc_control_stalls <= ; --completar  detenciones de riesgo de control
-	inc_Exceptions <= ;--completar numero de excepciones
-	inc_Exception_cycles <= ;	--completar	ciclos ejecutando excepciones
+	inc_I <= valid_I_WB; --completar instrucciones ejecutadas
+	inc_data_stalls <= parar_ID; --completar detenciones de riesgo de datos
+	inc_control_stalls <= Kill_IF; --completar  detenciones de riesgo de control
+	inc_Exceptions <= Exception_accepted;--completar numero de excepciones
+	inc_Exception_cycles <= MIPS_status(0) ;	--completar	ciclos ejecutando excepciones
 	-- Fin completar;
 	------------------------------------------------------------------------------------			
 end Behavioral;
