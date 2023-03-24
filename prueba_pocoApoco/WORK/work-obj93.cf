@@ -1,0 +1,64 @@
+v 4
+file "/home/pabloangus/Desktop/aoc2/Fuentes_moodle_P1_2023/" "UD_completar.vhd" "55bd447fde200e4a6849647e950b5d56f1ad95fd" "20230324114909.875":
+  entity ud at 1( 0) + 0 on 69;
+  architecture behavioral of ud at 25( 1481) + 0 on 70;
+file "/home/pabloangus/Desktop/aoc2/Fuentes_moodle_P1_2023/" "UC_Mips_solucion.vhd" "96f0147f94e96be143219d95578b7fba61917a66" "20230324111512.790":
+  entity uc at 20( 481) + 0 on 29;
+  architecture behavioral of uc at 50( 1583) + 0 on 30;
+file "/home/pabloangus/Desktop/aoc2/Fuentes_moodle_P1_2023/" "UA_completar.vhd" "46ce0b363d5dcbab0e9e4e2da5c87116b7a5b1b8" "20230324115114.914":
+  entity ua at 1( 0) + 0 on 73;
+  architecture behavioral of ua at 29( 821) + 0 on 74;
+file "/home/pabloangus/Desktop/aoc2/Fuentes_moodle_P1_2023/" "testbench_Mips.vhd" "0a18bb81afedffffbfb1a2e67c83e5a54a54d392" "20230324111511.098":
+  entity testbench at 3( 26) + 2 on 11;
+  architecture behavior of testbench at 10( 149) + 2 on 12;
+file "/home/pabloangus/Desktop/aoc2/Fuentes_moodle_P1_2023/" "REGISTER.vhd" "bb1f16639744f39ecc1ef4892185e16345358757" "20230324111511.886":
+  entity reg at 2( 2) + 0 on 15;
+  architecture behavioral of reg at 15( 421) + 0 on 16;
+file "/home/pabloangus/Desktop/aoc2/Fuentes_moodle_P1_2023/" "mux4_1_32bits.vhd" "635b1c2a967854cacd1ee923fa6313d8675aa07d" "20230324111513.373":
+  entity mux4_1_32bits at 1( 0) + 0 on 37;
+  architecture behavioral of mux4_1_32bits at 12( 400) + 0 on 38;
+file "/home/pabloangus/Desktop/aoc2/Fuentes_moodle_P1_2023/" "mux2_5bits.vhd" "380d4d9ec33f6a77c2e56b7f36dec5b19b69ff9d" "20230324111513.756":
+  entity mux2_5bits at 20( 489) + 0 on 43;
+  architecture behavioral of mux2_5bits at 39( 1068) + 0 on 44;
+file "/home/pabloangus/Desktop/aoc2/Fuentes_moodle_P1_2023/" "mux2_1.vhd" "16c03f03addbb8a3f3dad9a1da21f497d0aa4854" "20230324111513.480":
+  entity mux2_1 at 20( 493) + 0 on 39;
+  architecture behavioral of mux2_1 at 39( 1069) + 0 on 40;
+file "/home/pabloangus/Desktop/aoc2/Fuentes_moodle_P1_2023/" "Mips_segmentado_IRQ_completar_2023.vhd" "f98edbe8fea6d5232a9628cc560f3c7377526476" "20230324113842.417":
+  entity mips_segmentado at 11( 556) + 0 on 61;
+  architecture behavioral of mips_segmentado at 22( 1011) + 0 on 62;
+file "/home/pabloangus/Desktop/aoc2/Fuentes_moodle_P1_2023/" "memoriaRAM_I_tests.vhd" "d23bb2e637e74d37be53ee1a7c22eb9a0599e975" "20230324111512.117":
+  entity memoriaram_i at 20( 491) + 0 on 19;
+  architecture behavioral of memoriaram_i at 45( 1539) + 0 on 20;
+file "/home/pabloangus/Desktop/aoc2/Fuentes_moodle_P1_2023/" "memoriaRAM_D_tests.vhd" "b5d152d6277aef3c0ba718d7ad2f6f84a0e61b34" "20230324111514.041":
+  entity data_memory_subsystem at 20( 470) + 0 on 47;
+  architecture behavioral of data_memory_subsystem at 47( 1677) + 0 on 48;
+file "/home/pabloangus/Desktop/aoc2/Fuentes_moodle_P1_2023/" "Ext_signo.vhd" "a86099b57bba8e351753e752f26601c7908ad4f4" "20230324111512.605":
+  entity ext_signo at 20( 488) + 0 on 25;
+  architecture behavioral of ext_signo at 37( 989) + 0 on 26;
+file "/home/pabloangus/Desktop/aoc2/Fuentes_moodle_P1_2023/" "counter.vhd" "4c787804472fe6172d2d20f4bfdcfb0934d580c9" "20230324111514.373":
+  entity counter at 20( 487) + 0 on 51;
+  architecture behavioral of counter at 46( 1270) + 0 on 52;
+file "/home/pabloangus/Desktop/aoc2/Fuentes_moodle_P1_2023/" "BReg.vhd" "bb69d410cca56dd4f196ac706a7044ffa4091399" "20230324111512.427":
+  entity breg at 20( 481) + 0 on 23;
+  architecture behavioral of breg at 49( 1525) + 0 on 24;
+file "/home/pabloangus/Desktop/aoc2/Fuentes_moodle_P1_2023/" "bits_shifter.vhd" "84314704fb90b0c3a56bacef575e87f50f736186" "20230324111512.709":
+  entity two_bits_shifter at 20( 491) + 0 on 27;
+  architecture behavioral of two_bits_shifter at 37( 1003) + 0 on 28;
+file "/home/pabloangus/Desktop/aoc2/Fuentes_moodle_P1_2023/" "Banco_WB.vhd" "b7e69d6c5d6b0abc9126c7cc0c2d9db07c45ba7d" "20230324111514.230":
+  entity banco_wb at 20( 487) + 0 on 49;
+  architecture behavioral of banco_wb at 50( 1614) + 0 on 50;
+file "/home/pabloangus/Desktop/aoc2/Fuentes_moodle_P1_2023/" "Banco_MEM.vhd" "c32a4dd83ae0231c761549d297a172c932d55835" "20230324111513.845":
+  entity banco_mem at 20( 488) + 0 on 45;
+  architecture behavioral of banco_mem at 58( 1975) + 0 on 46;
+file "/home/pabloangus/Desktop/aoc2/Fuentes_moodle_P1_2023/" "Banco_ID.vhd" "688b006032428225982a73c4921ea61c8c20d37f" "20230324111512.306":
+  entity banco_id at 4( 288) + 0 on 21;
+  architecture behavioral of banco_id at 24( 1122) + 0 on 22;
+file "/home/pabloangus/Desktop/aoc2/Fuentes_moodle_P1_2023/" "Banco_EX.vhd" "13c2b29b8d9f3811a13f523032b642af624d1cb0" "20230324111513.010":
+  entity banco_ex at 20( 487) + 0 on 33;
+  architecture behavioral of banco_ex at 72( 2533) + 0 on 34;
+file "/home/pabloangus/Desktop/aoc2/Fuentes_moodle_P1_2023/" "ALU.vhd" "36885e9b9fb1d4260cef66f02b1eb0f5c1fecac1" "20230324111513.615":
+  entity alu at 20( 482) + 0 on 41;
+  architecture behavioral of alu at 40( 1278) + 0 on 42;
+file "/home/pabloangus/Desktop/aoc2/Fuentes_moodle_P1_2023/" "adder32.vhd" "314628325a7fba8ded83ce676b48051d32b99dc4" "20230324111512.012":
+  entity adder32 at 20( 486) + 0 on 17;
+  architecture behavioral of adder32 at 39( 1097) + 0 on 18;
