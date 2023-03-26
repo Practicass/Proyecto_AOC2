@@ -329,7 +329,7 @@ begin
 	status_reg: reg generic map (size => 2)
 			port map (	Din => status_input, clk => clk, reset => reset, load => update_status, Dout => MIPS_status);
 	------------------------------------------------------------------------------------
-	-- Completar: falta la l�gica que detecta cu�ndo se va a procesaruna excepci�n: cuando se recibe una de las se�ales (IRQ, Data_abort y Undef) y las excepciones est�n habilitadas (MIPS_status(1)='1')
+	-- Completar: falta la l�gica que detecta cu�ndo se va a procesaruna excepci�n: cuando se recibe una de las se�ales (IRQ, Data_abort y Undef) y las excepciones est�n habilitadas (MIPS_status(1)='0')
 	Exception_accepted <= (IRQ or Data_Abort or UNDEF) and not MIPS_status(1);
 	------------------------------------------------------------------------------------
 	-- Completar: falta la l�gica que gestiona update_status. Dise�adla.
