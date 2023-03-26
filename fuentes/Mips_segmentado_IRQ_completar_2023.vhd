@@ -383,7 +383,7 @@ begin
 	PC_in <= 	x"00000008" 		when (Exception_accepted = '1') and (Data_abort = '1') else -- Si llega un data abort y est� habilitado saltamos a la direcci�n 0x00000008
 				x"0000000C" 		when (UNDEF = '1') and (Exception_accepted = '1' ) else -- Si llega un UNDEF saltamos a la direcci�n 0x0000000C
 				x"00000004" 		when (Exception_accepted = '1') and (IRQ = '1') else -- Si llega un data abort saltamos a la direcci�n 0x00000008
-				Exception_LR_output when (Exception_accepted = '1') and (RTE_ID = '1') else 	--@ retorno. Si es una RTE volvemos a la @ que ten�amos almacenada en el Exception_LR		
+				Exception_LR_output when (RTE_ID = '1') else 	--@ retorno. Si es una RTE volvemos a la @ que ten�amos almacenada en el Exception_LR		
 				Dirsalto_ID 		when (salto_tomado = '1') else --@ Salto 
 				PC4; -- PC+4
 				
