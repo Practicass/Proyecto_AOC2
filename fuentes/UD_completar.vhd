@@ -50,7 +50,7 @@ begin
 	------------------------------------------------------------------------------------
 	-- Completar. Falta la l�gica que genera el valor correcto de estas se�ales.
 	-- dep_rs_Mem: 
-	dep_rs_Mem	<= 	'1' when ((valid_I_MEM = '1') AND (Reg_Rs_ID = RW_Mem) and (RegWrite_Mem = '1') and (IR_op_code /= NOP) and (IR_op_code /= RTE_opcode)) else '0';
+	dep_rs_Mem	<= 	'1' when ((valid_I_MEM = '1') AND (Reg_Rs_ID = RW_Mem) and (RegWrite_Mem = '1') and (IR_op_code /= NOP) and (IR_op_code /= RTE_opcode) and (IR_op_code /= LW)) else '0';
 							
 	-- dep_rt_EX: 
 	dep_rt_EX	<= 		'1' when ((valid_I_EX = '1') AND (Reg_Rt_ID = RW_EX) and (RegWrite_EX = '1') and (IR_op_code /= NOP) and (IR_op_code /= RTE_opcode)) else '0';
@@ -61,8 +61,8 @@ begin
 -------------------------------------------------------------------------------------------------------------------------------
 -- Riesgos de datos:
 	-- 1) lw_uso: Si hay dependencia y la instrucci�n en EX es lw tenemos un lw_uso
-	ld_uso_rs <= '1' when (MemRead_EX = '1') and ((dep_rs_EX = '1') or (dep_rs_Mem = '1')) else '0';
-	ld_uso_rt <= '1' when (MemRead_EX = '1') and ((dep_rt_EX = '1') or (dep_rt_Mem = '1')) else '0';
+	ld_uso_rs <= '1' when (MemRead_EX = '1') and ((dep_rs_EX = '1')) else '0';
+	ld_uso_rt <= '1' when (MemRead_EX = '1') and ((dep_rt_EX = '1')) else '0';
 									
 	-- 2) BEQ: si hay dependencias y la I en ID es un BEQ es un riesgo porque el BEQ lee los datos en ID, y no tenemos red de cortos en esa etapa
 	BEQ_rs	<= 	'1' when (IR_op_code = BEQ) and ((dep_rs_Mem = '1') or (dep_rs_EX = '1')) and (valid_I_ID = '1') else '0';
