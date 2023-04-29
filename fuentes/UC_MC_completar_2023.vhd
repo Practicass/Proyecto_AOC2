@@ -187,7 +187,9 @@ Mem_ERROR <= '1' when (error_state = memory_error) else '0';
 			--Completar. �Qu� m�s hay que hacer?. 
 			next_state <= Miss;
 		elsif (state = Inicio and WE= '1' and  hit='1') then
-			
+			Bus_req <= '1';
+			ready <='0';
+			next_state <= ;
 		end if;
 	-- Completar. �A�adir estados?
 	elsif(state = Miss) then
@@ -214,22 +216,39 @@ Mem_ERROR <= '1' when (error_state = memory_error) else '0';
 			ready <= '1';
 			mux_output <= "01";
 			end if;
-		end if;
-		if(bus_TRDY = '0') then
-			next_state <= Ready;
 		else
-			if(via_2_rpl = '1') then
-				MC_WE1 <= '1';
-			else
-				MC_WE0 <= '1';
-			end if;
-			if(palabra = "11") then
-				last_word <= '1';
-				next_state <= Inicio;
-			else
-				last_word <= '0';
+			if(bus_TRDY = '0') then
 				next_state <= Ready;
+			else
+				if(hit = '1') then
+					one_word <= '1';
+					last_word <= '1';
+					ready <= '1';
+					MC_send_data <= '1';
+					if(hit1 = '1') then
+						MC_WE1 <= '1';
+					else
+						MC_WE0 <= '1';
+					end if;
+					next_state <= Inicio;
+				else
+					if(via_2_rpl = '1') then
+						MC_WE1 <= '1';
+					else
+						MC_WE0 <= '1';
+					end if;
+					if(palabra = "11") then
+						last_word <= '1';
+						MC_tags_WE <= '1';
+						next_state <= Inicio;
+					else
+						last_word <= '0';
+						next_state <= Ready;
+					end if;
+				end if;
 			end if;
+		end if;
+	elsif(state = Write) then
 			
 		end if;
 	end if;
