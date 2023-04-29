@@ -185,10 +185,53 @@ Mem_ERROR <= '1' when (error_state = memory_error) else '0';
 	        Bus_Req <= '1';
 	        ready <= '0';
 			--Completar. �Qu� m�s hay que hacer?. 
-			next_state <= Miss
-			next_error_state <= error_state;
+			next_state <= Miss;
+		elsif (state = Inicio and WE= '1' and  hit='1') then
+			
+		end if;
 	-- Completar. �A�adir estados?
-		end if;	
+	elsif(state = Miss) then
+		Bus_Req <= '1';
+		if (Bus_grant= '0') then
+			next_state <= Miss;
+		else
+    		MC_send_addr_ctrl <= '0';
+			next_state <= Bus;
+		end if;
+	elsif(state = Bus) then
+		if(Bus_DevSel= '0') then --Error
+		else 
+			next_state <= Ready;
+		end if;
+	elsif(state = Ready) then
+		Frame <= '1';
+		if(addr_non_cacheable = '1') then
+			if(bus_TRDY = '0') then
+				next_state <= Ready;
+			else
+			one_word <= '1';
+			last_word <= '1';
+			ready <= '1';
+			mux_output <= "01";
+			end if;
+		end if;
+		if(bus_TRDY = '0') then
+			next_state <= Ready;
+		else
+			if(via_2_rpl = '1') then
+				MC_WE1 <= '1';
+			else
+				MC_WE0 <= '1';
+			end if;
+			if(palabra = "11") then
+				last_word <= '1';
+				next_state <= Inicio;
+			else
+				last_word <= '0';
+				next_state <= Ready;
+			end if;
+			
+		end if;
 	end if;
 		
    end process;
