@@ -186,10 +186,6 @@ Mem_ERROR <= '1' when (error_state = memory_error) else '0';
 	        ready <= '0';
 			--Completar. �Qu� m�s hay que hacer?. 
 			next_state <= Miss;
-		elsif (state = Inicio and WE= '1' and  hit='1') then
-			Bus_req <= '1';
-			ready <='0';
-			next_state <= ;
 		end if;
 	-- Completar. �A�adir estados?
 	elsif(state = Miss) then
@@ -247,9 +243,6 @@ Mem_ERROR <= '1' when (error_state = memory_error) else '0';
 					end if;
 				end if;
 			end if;
-		end if;
-	elsif(state = Write) then
-			
 		end if;
 	end if;
 		
