@@ -81,7 +81,8 @@ component counter is
 					  );
 end component;		           
 -- Ejemplos de nombres de estado. No hay que usar estos. Nombrad a vuestros estados con nombres descriptivos. As� se facilita la depuraci�n
-type state_type is (Inicio, single_word_transfer_addr, single_word_transfer_data, block_transfer_addr, block_transfer_data, Send_Addr_Word, Send_ADDR_CB, fallo, CopyBack, bajar_Frame); 
+--type state_type is (Inicio, single_word_transfer_addr, single_word_transfer_data, block_transfer_addr, block_transfer_data, Send_Addr_Word, Send_ADDR_CB, fallo, CopyBack, bajar_Frame); 
+type state_type is (Inicio, Miss, Buss, Readyy); 
 type error_type is (memory_error, No_error); 
 signal state, next_state : state_type; 
 signal error_state, next_error_state : error_type; 
@@ -193,19 +194,19 @@ Mem_ERROR <= '1' when (error_state = memory_error) else '0';
 		if (Bus_grant= '0') then
 			next_state <= Miss;
 		else
-    		MC_send_addr_ctrl <= '0';
-			next_state <= Bus;
+    		MC_send_addr_ctrl <= '1';
+			next_state <= Buss; 
 		end if;
-	elsif(state = Bus) then
+	elsif(state = Buss) then
 		if(Bus_DevSel= '0') then --Error
 		else 
-			next_state <= Ready;
+			next_state <= Readyy;
 		end if;
-	elsif(state = Ready) then
-		Frame <= '1';
+	elsif(state = Readyy) then
 		if(addr_non_cacheable = '1') then
 			if(bus_TRDY = '0') then
-				next_state <= Ready;
+				Frame <='1';
+				next_state <= Readyy;
 			else
 			one_word <= '1';
 			last_word <= '1';
@@ -214,7 +215,8 @@ Mem_ERROR <= '1' when (error_state = memory_error) else '0';
 			end if;
 		else
 			if(bus_TRDY = '0') then
-				next_state <= Ready;
+				Frame <= '1';
+				next_state <= Readyy;
 			else
 				if(hit = '1') then
 					one_word <= '1';
@@ -233,13 +235,13 @@ Mem_ERROR <= '1' when (error_state = memory_error) else '0';
 					else
 						MC_WE0 <= '1';
 					end if;
-					if(palabra = "11") then
+					if(last_word_block = '1') then
 						last_word <= '1';
 						MC_tags_WE <= '1';
 						next_state <= Inicio;
 					else
 						last_word <= '0';
-						next_state <= Ready;
+						next_state <= Readyy;
 					end if;
 				end if;
 			end if;
