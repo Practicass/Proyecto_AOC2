@@ -44,7 +44,7 @@ component mux2_1 is
            Dout : out  STD_LOGIC_VECTOR (31 downto 0));
 end component;
 
-component Data_Memory_Subsystem is port (
+component MD_mas_MC is port (
 		  CLK : in std_logic;
 		  reset: in std_logic; 
 		  ADDR : in std_logic_vector (31 downto 0); --Dir solicitada por el Mips
@@ -541,7 +541,7 @@ begin
 	WE <= MemWrite_MEM and valid_I_MEM; --s�lo se escribe si es una instrucci�n v�lida
 	RE <= MemRead_MEM and valid_I_MEM; --s�lo se lee si es una instrucci�n v�lida
 	
-	Mem_D: Data_Memory_Subsystem PORT MAP (CLK => CLK, ADDR => ALU_out_MEM, Din => BusB_MEM, WE => MemWrite_MEM, RE => MemRead_MEM, reset => reset, IO_input => IO_input, Mem_ready => Mem_ready, Dout => Mem_out, Data_abort => Data_abort);
+	Mem_D: MD_mas_MC PORT MAP (CLK => CLK, ADDR => ALU_out_MEM, Din => BusB_MEM, WE => MemWrite_MEM, RE => MemRead_MEM, reset => reset, IO_input => IO_input, Mem_ready => Mem_ready, Dout => Mem_out, Data_abort => Data_abort);
 
 	
 	-- parar_EX indica que hay que detener la etapa de memoria (se usa m�s adelante cuando la jerarqu�a de memoria sea m�s compleja)

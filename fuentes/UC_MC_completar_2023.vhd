@@ -37,7 +37,7 @@ entity UC_MC is
 			hit0 : in  STD_LOGIC; --se activa si hay acierto en la via 0
 			hit1 : in  STD_LOGIC; --se activa si hay acierto en la via 1
 			addr_non_cacheable: in STD_LOGIC; --indica que la direcci�n no debe almacenarse en MC. En este caso porque pertenece a la scratch
-			bus_TRDY : in  STD_LOGIC; --indica que el esclavo no puede realizar la operaci�n solicitada en este ciclo
+			bus_TRDY : in  STD_LOGIC; --indica que el esclavo puede realizar la operaci�n solicitada en este ciclo
 			Bus_DevSel: in  STD_LOGIC; --indica que el esclavo ha reconocido que la direcci�n est� dentro de su rango
 			via_2_rpl :  in  STD_LOGIC; --indica que via se va a reemplazar
 			Bus_grant :  in  STD_LOGIC; --indica la concesi�n del uso del bus
