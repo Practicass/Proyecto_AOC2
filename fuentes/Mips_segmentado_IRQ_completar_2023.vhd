@@ -469,7 +469,8 @@ begin
 	-- Si nos paran en ID marcamos como invalida la instrucci�n que mandamos a la etapa EX
 	-- La instrucci�n de EX ser� v�lida el pr�ximo ciclo, si lo es la de ID y no hay detenci�n
 	
-	valid_I_EX_in	<=  valid_I_ID and not( parar_ID);				
+	valid_I_EX_in	<=  valid_I_ID and not( parar_ID);
+				
 				
 	-------------------------------------------------------------------------------------
 	-- si la operaci�n es aritm�tica (es decir: IR_op_code= "000001") miro el campo funct
@@ -518,6 +519,8 @@ begin
 	
 	mux_dst: mux2_5bits port map (Din0 => Reg_Rt_EX, DIn1 => Reg_Rd_EX, ctrl => RegDst_EX, Dout => RW_EX);
 	
+	valid_I_MEM <= valid_I_EX and not(Exception_accepted);
+
 	-- No reseteamos el banco si hay una excepci�n porque podr�a llegar a mitad de una transferencia y corromper la MC 
 	reset_MEM <= (reset);
 	--si paramos en EX no hay que cargar una instrucci�n nueva en la etap MEM
@@ -541,7 +544,7 @@ begin
 	WE <= MemWrite_MEM and valid_I_MEM; --s�lo se escribe si es una instrucci�n v�lida
 	RE <= MemRead_MEM and valid_I_MEM; --s�lo se lee si es una instrucci�n v�lida
 	
-	Mem_D: MD_mas_MC PORT MAP (CLK => CLK, ADDR => ALU_out_MEM, Din => BusB_MEM, WE => MemWrite_MEM, RE => MemRead_MEM, reset => reset, IO_input => IO_input, Mem_ready => Mem_ready, Dout => Mem_out, Data_abort => Data_abort);
+	Mem_D: MD_mas_MC PORT MAP (CLK => CLK, ADDR => ALU_out_MEM, Din => BusB_MEM, WE => WE, RE => RE, reset => reset, IO_input => IO_input, Mem_ready => Mem_ready, Dout => Mem_out, Data_abort => Data_abort);
 
 	
 	-- parar_EX indica que hay que detener la etapa de memoria (se usa m�s adelante cuando la jerarqu�a de memoria sea m�s compleja)

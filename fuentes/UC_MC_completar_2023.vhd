@@ -200,12 +200,13 @@ Mem_ERROR <= '1' when (error_state = memory_error) else '0';
 	elsif(state = Buss) then
 		if(Bus_DevSel= '0') then --Error
 		else 
+			Frame <= '1';
 			next_state <= Readyy;
 		end if;
 	elsif(state = Readyy) then
+		Frame <= '1';
 		if(addr_non_cacheable = '1') then
 			if(bus_TRDY = '0') then
-				Frame <='1';
 				next_state <= Readyy;
 			else
 			one_word <= '1';
@@ -213,9 +214,9 @@ Mem_ERROR <= '1' when (error_state = memory_error) else '0';
 			ready <= '1';
 			mux_output <= "01";
 			end if;
+			next_state <= Inicio;
 		else
 			if(bus_TRDY = '0') then
-				Frame <= '1';
 				next_state <= Readyy;
 			else
 				if(hit = '1') then
@@ -230,10 +231,13 @@ Mem_ERROR <= '1' when (error_state = memory_error) else '0';
 					end if;
 					next_state <= Inicio;
 				else
+					mux_origen <= '1';
 					if(via_2_rpl = '1') then
 						MC_WE1 <= '1';
+						count_enable <= '1';
 					else
 						MC_WE0 <= '1';
+						count_enable <= '1';
 					end if;
 					if(last_word_block = '1') then
 						last_word <= '1';

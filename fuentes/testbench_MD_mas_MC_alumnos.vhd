@@ -21,15 +21,15 @@
 		  WE : in std_logic;		-- write enable	del MIPS
 		  RE : in std_logic;		-- read enable del MIPS	
 		  IO_input: in std_logic_vector (31 downto 0); --dato que viene de una entrada del sistema
-		  Mem_ready: out std_logic; -- indica si podemos hacer la operación solicitada en el ciclo actual
-		  Data_abort: out std_logic; --indica que el último acceso a memoria ha sido un error
-		  Dout : out std_logic_vector (31 downto 0) --dato que se envía al Mips
+		  Mem_ready: out std_logic; -- indica si podemos hacer la operaciï¿½n solicitada en el ciclo actual
+		  Data_abort: out std_logic; --indica que el ï¿½ltimo acceso a memoria ha sido un error
+		  Dout : out std_logic_vector (31 downto 0) --dato que se envï¿½a al Mips
 		); 
  end COMPONENT;
 
         SIGNAL clk, reset, RE, WE, Mem_ready, Data_abort :  std_logic;
         signal ADDR, Din, Dout, IO_input : std_logic_vector (31 downto 0);
-        signal test_id : std_logic_vector (7 downto 0); --Para saber por qué prueba vamos
+        signal test_id : std_logic_vector (7 downto 0); --Para saber por quï¿½ prueba vamos
        
 			           
   -- Clock period definitions
@@ -49,11 +49,11 @@
    end process;
 
  stim_proc: process
-   		 variable done: integer :=0; -- la vamos a usar para la simulación
+   		 variable done: integer :=0; -- la vamos a usar para la simulaciï¿½n
  	begin		
       		
     	reset <= '1';
-    	--conv_std_logic_vector convierte el primer número (un 0) a un vector de tantos bits como se indiquen (en este caso 32 bits)
+    	--conv_std_logic_vector convierte el primer nï¿½mero (un 0) a un vector de tantos bits como se indiquen (en este caso 32 bits)
     	addr <= conv_std_logic_vector(0, 32);
   	   	Din <= conv_std_logic_vector(0, 32);
 		-- IO_input. Lo voy a ir cambiando para que se vea como cambia en el scratch
@@ -67,9 +67,9 @@
 	  	reset <= '0';
 	  	RE <= '1';
 	  	Addr <= conv_std_logic_vector(64, 32); 
-	  	-- Esperamos a que la memoria esté preparada para atender otra solicitud
+	  	-- Esperamos a que la memoria estï¿½ preparada para atender otra solicitud
 	  	-- a veces un pulso espureo (en este caso en mem_ready) puede hacer que vuestro banco de pruebas se adelante. 
-        -- si esperamos un ns desaparecerá el pulso espureo, pero no el real
+        -- si esperamos un ns desaparecerï¿½ el pulso espureo, pero no el real
 	  	done := 0;
         wait for 1 ns;
 	  	while done < 1 loop
@@ -91,9 +91,9 @@
 		--Test 1---------------------------------------------------------------------------------------------------------
 		test_id <= conv_std_logic_vector(1, 8); --Test 1
       	Addr <= conv_std_logic_vector(68, 32); --Debe ser un acierto de lectura. Devolvemos un 2 al procesador
-	  	-- Esperamos a que la memoria esté preparada para atender otra solicitud
+	  	-- Esperamos a que la memoria estï¿½ preparada para atender otra solicitud
 	  	-- a veces un pulso espureo (en este caso en mem_ready) puede hacer que vuestro banco de pruebas se adelante. 
-        -- si esperamos un ns desaparecerá el pulso espureo, pero no el real
+        -- si esperamos un ns desaparecerï¿½ el pulso espureo, pero no el real
 	  	done := 0;
         wait for 1 ns;
 	  	while done < 1 loop
@@ -115,15 +115,15 @@
 		--Test 2---------------------------------------------------------------------------------------------------------
 		--Debe ser un acierto de escritura. Escribimos FF en @18 y en la tercera palabra del bloque de MC del cjto 0 via 0
 		test_id <= conv_std_logic_vector(2, 8); --Test 2
-		-- IO_input. Segundo valor, para ver cómo cambia
+		-- IO_input. Segundo valor, para ver cï¿½mo cambia
 		IO_input <= conv_std_logic_vector(2048, 32);
 		Addr <= conv_std_logic_vector(72, 32); 
 		Din <= conv_std_logic_vector(255, 32);
 		RE <= '0';
 		WE <= '1';
-		-- Esperamos a que la memoria esté preparada para atender otra solicitud
+		-- Esperamos a que la memoria estï¿½ preparada para atender otra solicitud
 	  	-- a veces un pulso espureo (en este caso en mem_ready) puede hacer que vuestro banco de pruebas se adelante. 
-        -- si esperamos un ns desaparecerá el pulso espureo, pero no el real
+        -- si esperamos un ns desaparecerï¿½ el pulso espureo, pero no el real
 	  	done := 0;
         wait for 1 ns;
 	  	while done < 1 loop
@@ -149,9 +149,9 @@
 		Din <= conv_std_logic_vector(255, 32);
 		RE <= '0';
 		WE <= '1';
-		-- Esperamos a que la memoria esté preparada para atender otra solicitud
+		-- Esperamos a que la memoria estï¿½ preparada para atender otra solicitud
 	  	-- a veces un pulso espureo (en este caso en mem_ready) puede hacer que vuestro banco de pruebas se adelante. 
-        -- si esperamos un ns desaparecerá el pulso espureo, pero no el real
+        -- si esperamos un ns desaparecerï¿½ el pulso espureo, pero no el real
 	  	done := 0;
         wait for 1 ns;
 	  	while done < 1 loop
@@ -177,9 +177,9 @@
 		Addr <= conv_std_logic_vector(96, 32); 
 		RE <= '0';
 		WE <= '1';
-		-- Esperamos a que la memoria esté preparada para atender otra solicitud
+		-- Esperamos a que la memoria estï¿½ preparada para atender otra solicitud
 	  	-- a veces un pulso espureo (en este caso en mem_ready) puede hacer que vuestro banco de pruebas se adelante. 
-        -- si esperamos un ns desaparecerá el pulso espureo, pero no el real
+        -- si esperamos un ns desaparecerï¿½ el pulso espureo, pero no el real
 	  	done := 0;
         wait for 1 ns;
 	  	while done < 1 loop
@@ -206,9 +206,9 @@
 		Addr <= conv_std_logic_vector(128, 32); 
 		RE <= '1';
 		WE <= '0';
-		-- Esperamos a que la memoria esté preparada para atender otra solicitud
+		-- Esperamos a que la memoria estï¿½ preparada para atender otra solicitud
 	  	-- a veces un pulso espureo (en este caso en mem_ready) puede hacer que vuestro banco de pruebas se adelante. 
-        -- si esperamos un ns desaparecerá el pulso espureo, pero no el real
+        -- si esperamos un ns desaparecerï¿½ el pulso espureo, pero no el real
 	  	done := 0;
         wait for 1 ns;
 	  	while done < 1 loop
@@ -233,9 +233,9 @@
 		Addr <= conv_std_logic_vector(64, 32); --Debe ser acierto de lectura. Devolvemos un 1 al MIPS
 		RE <= '1';
 		WE <= '0';
-		-- Esperamos a que la memoria esté preparada para atender otra solicitud
+		-- Esperamos a que la memoria estï¿½ preparada para atender otra solicitud
 	  	-- a veces un pulso espureo (en este caso en mem_ready) puede hacer que vuestro banco de pruebas se adelante. 
-        -- si esperamos un ns desaparecerá el pulso espureo, pero no el real
+        -- si esperamos un ns desaparecerï¿½ el pulso espureo, pero no el real
 	  	done := 0;
         wait for 1 ns;
 	  	while done < 1 loop
@@ -260,9 +260,9 @@
 		Addr <= conv_std_logic_vector(256, 32); 
 		RE <= '1';
 		WE <= '0';
-		-- Esperamos a que la memoria esté preparada para atender otra solicitud
+		-- Esperamos a que la memoria estï¿½ preparada para atender otra solicitud
 	  	-- a veces un pulso espureo (en este caso en mem_ready) puede hacer que vuestro banco de pruebas se adelante. 
-        -- si esperamos un ns desaparecerá el pulso espureo, pero no el real
+        -- si esperamos un ns desaparecerï¿½ el pulso espureo, pero no el real
 	  	done := 0;
         wait for 1 ns;
 	  	while done < 1 loop
@@ -287,9 +287,9 @@
 		Addr <= conv_std_logic_vector(192, 32); 
 		RE <= '1';
 		WE <= '0';
-		-- Esperamos a que la memoria esté preparada para atender otra solicitud
+		-- Esperamos a que la memoria estï¿½ preparada para atender otra solicitud
 	  	-- a veces un pulso espureo (en este caso en mem_ready) puede hacer que vuestro banco de pruebas se adelante. 
-        -- si esperamos un ns desaparecerá el pulso espureo, pero no el real
+        -- si esperamos un ns desaparecerï¿½ el pulso espureo, pero no el real
 	  	done := 0;
         wait for 1 ns;
 	  	while done < 1 loop
@@ -314,9 +314,10 @@
 		Din <= conv_std_logic_vector(254, 32);
 		Addr <= x"10000004"; --Escritura en la memoria scratch (no cacheable). 
 		WE <= '1';
-		-- Esperamos a que la memoria esté preparada para atender otra solicitud
+		RE <= '0';
+		-- Esperamos a que la memoria estï¿½ preparada para atender otra solicitud
 	  	-- a veces un pulso espureo (en este caso en mem_ready) puede hacer que vuestro banco de pruebas se adelante. 
-        -- si esperamos un ns desaparecerá el pulso espureo, pero no el real
+        -- si esperamos un ns desaparecerï¿½ el pulso espureo, pero no el real
 	  	done := 0;
         wait for 1 ns;
 	  	while done < 1 loop
@@ -341,9 +342,9 @@
 		Addr <= x"10000004"; 
 		RE <= '1';
 		WE <= '0';
-		-- Esperamos a que la memoria esté preparada para atender otra solicitud
+		-- Esperamos a que la memoria estï¿½ preparada para atender otra solicitud
 	  	-- a veces un pulso espureo (en este caso en mem_ready) puede hacer que vuestro banco de pruebas se adelante. 
-        -- si esperamos un ns desaparecerá el pulso espureo, pero no el real
+        -- si esperamos un ns desaparecerï¿½ el pulso espureo, pero no el real
 	  	done := 0;
         wait for 1 ns;
 	  	while done < 1 loop
@@ -363,14 +364,14 @@
     	wait until clk'event;
     	wait until clk'event;--esperamos al siguiente pulso de reloj
 		--Test 11---------------------------------------------------------------------------------------------------------
-		--Leemos el valor que ha escrito Master_IO. El último es 4096
+		--Leemos el valor que ha escrito Master_IO. El ï¿½ltimo es 4096
 		test_id <= conv_std_logic_vector(11, 8); 
 		Addr <= x"10000000"; 
 		RE <= '1';
 		WE <= '0';
-		-- Esperamos a que la memoria esté preparada para atender otra solicitud
+		-- Esperamos a que la memoria estï¿½ preparada para atender otra solicitud
 	  	-- a veces un pulso espureo (en este caso en mem_ready) puede hacer que vuestro banco de pruebas se adelante. 
-        -- si esperamos un ns desaparecerá el pulso espureo, pero no el real
+        -- si esperamos un ns desaparecerï¿½ el pulso espureo, pero no el real
 	  	done := 0;
         wait for 1 ns;
 	  	while done < 1 loop
@@ -390,15 +391,15 @@
     	wait until clk'event;
     	wait until clk'event;--esperamos al siguiente pulso de reloj
 		--Test 12---------------------------------------------------------------------------------------------------------
-		--Fallo de lectura, pero la dirección está fuera de rang. Cuand el contolador la pidaa través del bus nadie responderá y se generará un error de memoria
-		-- la dirección de la palabra se almacenará en el registro interno de MC
+		--Fallo de lectura, pero la direcciï¿½n estï¿½ fuera de rang. Cuand el contolador la pidaa travï¿½s del bus nadie responderï¿½ y se generarï¿½ un error de memoria
+		-- la direcciï¿½n de la palabra se almacenarï¿½ en el registro interno de MC
 		test_id <= conv_std_logic_vector(12, 8); 
 		Addr <= x"01110000"; 
 		RE <= '1';
 		WE <= '0';
-		-- Esperamos a que la memoria esté preparada para atender otra solicitud
+		-- Esperamos a que la memoria estï¿½ preparada para atender otra solicitud
 	  	-- a veces un pulso espureo (en este caso en mem_ready) puede hacer que vuestro banco de pruebas se adelante. 
-        -- si esperamos un ns desaparecerá el pulso espureo, pero no el real
+        -- si esperamos un ns desaparecerï¿½ el pulso espureo, pero no el real
 	  	done := 0;
         wait for 1 ns;
 	  	while done < 1 loop
@@ -418,15 +419,15 @@
     	wait until clk'event;
     	wait until clk'event;--esperamos al siguiente pulso de reloj
 	  	--Test 13---------------------------------------------------------------------------------------------------------
-		--Pedimos la dirección del registro interno de MC
-		--Debe pasar de estado memory_error a No_error y desactivarse la señal data abort. Leemos la dirección x"01110000" (17891328)
+		--Pedimos la direcciï¿½n del registro interno de MC
+		--Debe pasar de estado memory_error a No_error y desactivarse la seï¿½al data abort. Leemos la direcciï¿½n x"01110000" (17891328)
 		test_id <= conv_std_logic_vector(13, 8); 
 		Addr <= x"01000000"; 
 		RE <= '1';
 		WE <= '0';
-		-- Esperamos a que la memoria esté preparada para atender otra solicitud
+		-- Esperamos a que la memoria estï¿½ preparada para atender otra solicitud
 	  	-- a veces un pulso espureo (en este caso en mem_ready) puede hacer que vuestro banco de pruebas se adelante. 
-        -- si esperamos un ns desaparecerá el pulso espureo, pero no el real
+        -- si esperamos un ns desaparecerï¿½ el pulso espureo, pero no el real
 	  	done := 0;
         wait for 1 ns;
 	  	while done < 1 loop
@@ -448,7 +449,7 @@
 		--Test 255---------------------------------------------------------------------------------------------------------
 		--FIN
 		--Nos quedamos pidiendo todo el rato el mismo valor a la memoria scratch. 
-		--Se puede ver como una y otra vez habrá que esperar a que la memoria lo envie. Ya que al no ser cacheable no se almacena en MC
+		--Se puede ver como una y otra vez habrï¿½ que esperar a que la memoria lo envie. Ya que al no ser cacheable no se almacena en MC
 	  	test_id <= conv_std_logic_vector(255, 8); 
 		Addr <= x"10000000"; 
 		RE <= '1';

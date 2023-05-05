@@ -50,10 +50,10 @@ begin
 	------------------------------------------------------------------------------------
 	-- Completar. Falta la l�gica que genera el valor correcto de estas se�ales.
 	-- dep_rs_Mem: 
-	dep_rs_Mem	<= 	'1' when ((valid_I_MEM = '1') AND (Reg_Rs_ID = RW_Mem) and (RegWrite_Mem = '1') and (IR_op_code /= NOP) and (IR_op_code /= RTE_opcode) and (IR_op_code /= LW)) else '0';
+	dep_rs_Mem	<= 	'1' when ((valid_I_MEM = '1') AND (Reg_Rs_ID = RW_Mem) and (RegWrite_Mem = '1') and (IR_op_code /= NOP) and (IR_op_code /= RTE_opcode)) else '0';
 							
 	-- dep_rt_EX: 
-	dep_rt_EX	<= 		'1' when ((valid_I_EX = '1') AND (Reg_Rt_ID = RW_EX) and (RegWrite_EX = '1') and (IR_op_code /= NOP) and (IR_op_code /= RTE_opcode)) else '0';
+	dep_rt_EX	<= 		'1' when ((valid_I_EX = '1') AND (Reg_Rt_ID = RW_EX) and (RegWrite_EX = '1') and (IR_op_code /= NOP) and (IR_op_code /= RTE_opcode) and (IR_op_code /= LW) and (IR_op_code /= WRO_opcode)) else '0';
 								
 	-- dep_rt_Mem:
 	dep_rt_Mem	<= 	'1' when ((valid_I_MEM = '1') AND (Reg_Rt_ID = RW_Mem) and (RegWrite_Mem = '1') and (IR_op_code /= NOP) and (IR_op_code /= RTE_opcode)) else '0';
