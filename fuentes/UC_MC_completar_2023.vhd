@@ -191,6 +191,9 @@ Mem_ERROR <= '1' when (error_state = memory_error) else '0';
 	-- Completar. �A�adir estados?
 	elsif(state = Miss) then
 		Bus_Req <= '1';
+		if(hit = '1')then
+			MC_bus_Rd_Wr <= '1';
+		end if;
 		if (Bus_grant= '0') then
 			next_state <= Miss;
 		else
