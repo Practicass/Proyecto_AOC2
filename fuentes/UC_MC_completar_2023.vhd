@@ -191,33 +191,39 @@ Mem_ERROR <= '1' when (error_state = memory_error) else '0';
 	-- Completar. �A�adir estados?
 	elsif(state = Miss) then
 		Bus_Req <= '1';
-		if(hit = '1')then
-			MC_bus_Rd_Wr <= '1';
-		end if;
 		if (Bus_grant= '0') then
 			next_state <= Miss;
 		else
-    		MC_send_addr_ctrl <= '1';
-			next_state <= Buss; 
+			if (WE = '1' and (hit ='1' or addr_non_cacheable = '1')) then
+			MC_bus_Rd_Wr <= '1';
+			end if;		
+    			MC_send_addr_ctrl <= '1';
+			next_state <= Buss;
 		end if;
 	elsif(state = Buss) then
-		if(Bus_DevSel= '0') then --Error
+		if(Bus_DevSel= '0' and addr_non_cacheable = '0') then --Error
 		else 
 			Frame <= '1';
+			if (addr_non_cacheable = '1') then
+				if ( WE = '1') then	
+					MC_send_data <= '1';
+					next_state <= Inicio;
+					ready <= '1';
+					last_word <= '1';
+				else
+					next_state <= Readyy;
+			       	end if;	       
+			else
 			next_state <= Readyy;
+		end if;
+			
 		end if;
 	elsif(state = Readyy) then
 		Frame <= '1';
 		if(addr_non_cacheable = '1') then
-			if(bus_TRDY = '0') then
-				next_state <= Readyy;
-			else
-			one_word <= '1';
-			last_word <= '1';
-			ready <= '1';
 			mux_output <= "01";
-			end if;
 			next_state <= Inicio;
+			ready <= '1';
 		else
 			if(bus_TRDY = '0') then
 				next_state <= Readyy;
