@@ -82,7 +82,7 @@ component counter is
 end component;		           
 -- Ejemplos de nombres de estado. No hay que usar estos. Nombrad a vuestros estados con nombres descriptivos. As� se facilita la depuraci�n
 --type state_type is (Inicio, single_word_transfer_addr, single_word_transfer_data, block_transfer_addr, block_transfer_data, Send_Addr_Word, Send_ADDR_CB, fallo, CopyBack, bajar_Frame); 
-type state_type is (Inicio, Miss, Buss, Readyy); 
+type state_type is (Inicio, Miss, Readyy); 
 type error_type is (memory_error, No_error); 
 signal state, next_state : state_type; 
 signal error_state, next_error_state : error_type; 
@@ -194,16 +194,24 @@ Mem_ERROR <= '1' when (error_state = memory_error) else '0';
 		if (Bus_grant= '0') then
 			next_state <= Miss;
 		else
-			if (WE = '1' and (hit ='1' or addr_non_cacheable = '1')) then
-			MC_bus_Rd_Wr <= '1';
-			end if;		
-    			MC_send_addr_ctrl <= '1';
-			next_state <= Buss;
+			MC_send_addr_ctrl <= '1';
+			if(Bus_DevSel= '0') then
+				load_addr_error <= '1';
+				next_error_state <= memory_error;
+				next_state <= Inicio;
+				ready <= '1';
+			else 
+				if (WE = '1' and (hit ='1' or addr_non_cacheable = '1')) then
+					MC_bus_Rd_Wr <= '1';
+				end if;		
+    				
+				next_state <= Readyy;
+			end if;
 		end if;
-	elsif(state = Buss) then
-		if(Bus_DevSel= '0' and addr_non_cacheable = '0') then --Error
-		else 
-			Frame <= '1';
+
+	elsif(state = Readyy) then
+		Frame <= '1';
+		if(bus_TRDY = '1') then
 			if (addr_non_cacheable = '1') then
 				if ( WE = '1') then	
 					MC_send_data <= '1';
@@ -211,22 +219,10 @@ Mem_ERROR <= '1' when (error_state = memory_error) else '0';
 					ready <= '1';
 					last_word <= '1';
 				else
-					next_state <= Readyy;
-			       	end if;	       
-			else
-			next_state <= Readyy;
-		end if;
-			
-		end if;
-	elsif(state = Readyy) then
-		Frame <= '1';
-		if(addr_non_cacheable = '1') then
-			mux_output <= "01";
-			next_state <= Inicio;
-			ready <= '1';
-		else
-			if(bus_TRDY = '0') then
-				next_state <= Readyy;
+					mux_output <= "01";
+					next_state <= Inicio;
+					ready <= '1';
+			       	end if;	 
 			else
 				if(hit = '1') then
 					one_word <= '1';
