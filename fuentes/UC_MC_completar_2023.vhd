@@ -202,12 +202,18 @@ Mem_ERROR <= '1' when (error_state = memory_error) else '0';
 				ready <= '1';
 			else 
 				if (WE = '1' and (hit ='1' or addr_non_cacheable = '1')) then
-					MC_bus_Rd_Wr <= '1';
-				end if;		
+					MC_bus_Rd_Wr <= '1'; 
+					
+				end if;	
+				
     				
 				next_state <= Readyy;
 			end if;
+			if( hit = '0' and addr_non_cacheable = '0') then
+					inc_m <= '1';
+				end if;
 		end if;
+		
 
 	elsif(state = Readyy) then
 		Frame <= '1';
@@ -218,6 +224,7 @@ Mem_ERROR <= '1' when (error_state = memory_error) else '0';
 					next_state <= Inicio;
 					ready <= '1';
 					last_word <= '1';
+					inc_w <= '1';
 				else
 					mux_output <= "01";
 					next_state <= Inicio;
@@ -234,6 +241,7 @@ Mem_ERROR <= '1' when (error_state = memory_error) else '0';
 					else
 						MC_WE0 <= '1';
 					end if;
+					inc_w <= '1';
 					next_state <= Inicio;
 				else
 					mux_origen <= '1';
