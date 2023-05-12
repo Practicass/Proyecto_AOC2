@@ -307,12 +307,12 @@ COMPONENT Banco_MEM
 	signal valid_I_IF, valid_I_ID, valid_I_EX_in, valid_I_EX, valid_I_MEM, valid_I_WB_in, valid_I_WB: std_logic;
 -- contadores
 	signal cycles: std_logic_vector(15 downto 0);
-	signal Ins, data_stalls, control_stalls, Exceptions, Exception_cycles: std_logic_vector(7 downto 0);
-	signal inc_cycles, inc_I, inc_data_stalls, inc_control_stalls, inc_Exceptions, inc_Exception_cycles : std_logic;
+	signal Ins, data_stalls, control_stalls, Exceptions, paradas_mem, Exception_cycles: std_logic_vector(7 downto 0);
+	signal inc_cycles, inc_I, inc_data_stalls, inc_control_stalls, inc_Exceptions, inc_Exception_cycles, inc_paradas_mem : std_logic;
 --interfaz con memoria
 	signal Mem_ready : std_logic;
-	
-
+	--
+ 
 begin
 	-- ****************************************************************************************************
 	-- Gesti�n de Excepciones: 
@@ -551,7 +551,7 @@ begin
 	-- La instrucci�n en WB ser� v�lida el pr�ximo ciclo si la instrucci�n en Mem es v�lida y no hay que parar 
 	valid_I_WB_in <= valid_I_MEM and not(parar_EX);
 	
-	Banco_MEM_WB: Banco_WB PORT MAP ( 	ALU_out_MEM => ALU_out_MEM, ALU_out_WB => ALU_out_WB, Mem_out => Mem_out, MDR => MDR, clk => clk, reset => reset, load => '1', 
+	Banco_MEM_WB: Banco_WB PORT MAP ( 	ALU_out_MEM => ALU_out_MEM, ALU_out_WB => ALU_out_WB, Mem_out => Mem_out, MDR => MDR, clk => clk, reset => reset, load => Mem_ready, 
 										MemtoReg_MEM => MemtoReg_MEM, RegWrite_MEM => RegWrite_MEM, MemtoReg_WB => MemtoReg_WB, RegWrite_WB => RegWrite_WB, 
 										RW_MEM => RW_MEM, RW_WB => RW_WB,
 										-- Nuevo
@@ -588,6 +588,10 @@ begin
 	-- Contador de ciclos ejecutando excepciones						
 	cont_Exceptions_cycles : counter generic map (size => 8)
 							port map (clk => clk, reset => reset, count_enable => inc_Exception_cycles, count => Exception_cycles);
+	
+	-- Contador de paradas por riesgo de memoria						
+	cont_Paradas_mem : counter generic map (size => 8)
+							port map (clk => clk, reset => reset, count_enable => inc_paradas_mem, count => paradas_mem);						
 	------------------------------------------------------------------------------------
 	-- Completar:
 	inc_cycles <= '1';--Done
@@ -596,6 +600,7 @@ begin
 	inc_control_stalls <= Kill_IF; --completar
 	inc_Exceptions <= Exception_accepted;--completar
 	inc_Exception_cycles <= MIPS_status(0);	--completar	
+	inc_paradas_mem <= not(Mem_ready);
 	-- Fin completar;
 	------------------------------------------------------------------------------------			
 end Behavioral;
