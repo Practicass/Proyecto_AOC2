@@ -304,7 +304,7 @@ COMPONENT Banco_MEM
 	signal Exception_accepted, RTE_ID, update_status, reset_EX, reset_MEM: std_logic;													
 	signal Data_Abort, Undef: std_logic;
 -- Bit validez etapas
-	signal valid_I_IF, valid_I_ID, valid_I_EX_in, valid_I_EX, valid_I_MEM, valid_I_WB_in, valid_I_WB: std_logic;
+	signal valid_I_IF, valid_I_ID, valid_I_EX_in, valid_I_EX, valid_I_EX_2, valid_I_MEM, valid_I_WB_in, valid_I_WB: std_logic;
 -- contadores
 	signal cycles: std_logic_vector(15 downto 0);
 	signal Ins, data_stalls, control_stalls, Exceptions, paradas_mem, Exception_cycles: std_logic_vector(7 downto 0);
@@ -519,13 +519,14 @@ begin
 	
 	mux_dst: mux2_5bits port map (Din0 => Reg_Rt_EX, DIn1 => Reg_Rd_EX, ctrl => RegDst_EX, Dout => RW_EX);
 	
-	valid_I_MEM <= valid_I_EX and not(Exception_accepted);
+	--valid_I_MEM <= valid_I_EX and not(Exception_accepted);
 
 	-- No reseteamos el banco si hay una excepci�n porque podr�a llegar a mitad de una transferencia y corromper la MC 
 	reset_MEM <= (reset);
 	--si paramos en EX no hay que cargar una instrucci�n nueva en la etap MEM
 	load_MEM <= not(parar_EX);
-	Banco_EX_MEM: Banco_MEM PORT MAP ( ALU_out_EX => ALU_out_EX, ALU_out_MEM => ALU_out_MEM, clk => clk, reset => reset_MEM, load => load_MEM, MemWrite_EX => MemWrite_EX,
+	valid_I_EX_2 <= (valid_I_EX and not (Exception_accepted));
+	Banco_EX_MEM: Banco_MEM PORT MAP ( ALU_out_EX => ALU_out_EX, ALU_out_MEM => ALU_out_MEM, clk => clk, reset => reset_MEM, load => load_MEM , MemWrite_EX => MemWrite_EX,
 													MemRead_EX => MemRead_EX, MemtoReg_EX => MemtoReg_EX, RegWrite_EX => RegWrite_EX, MemWrite_MEM => MemWrite_MEM, MemRead_MEM => MemRead_MEM,
 													MemtoReg_MEM => MemtoReg_MEM, RegWrite_MEM => RegWrite_MEM, 
 													--sol:
@@ -533,10 +534,9 @@ begin
 													--fin sol
 													BusB_MEM => BusB_MEM, RW_EX => RW_EX, RW_MEM => RW_MEM,
 													-- Nuevo
-													valid_I_EX => valid_I_EX, valid_I_MEM => valid_I_MEM,
+													valid_I_EX => valid_I_EX_2, valid_I_MEM => valid_I_MEM,
 													PC_exception_EX => PC_exception_EX, PC_exception_MEM => PC_exception_MEM); --Sol: para llevar el PC a la etapa MEM	
 													
-	
 	--
 	------------------------------------------Etapa MEM-------------------------------------------------------------------
 	--

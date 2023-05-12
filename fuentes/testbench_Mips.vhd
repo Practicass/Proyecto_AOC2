@@ -60,7 +60,7 @@
 		IRQ <= '0';
 		wait for CLK_period*20;
 		-- Ahora interrumpimos sin parar
-		IRQ <= '1';
+		IRQ <= '0';
 		wait;
    end process;
 
