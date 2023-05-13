@@ -194,6 +194,10 @@ Mem_ERROR <= '1' when (error_state = memory_error) else '0';
 		if (Bus_grant= '0') then
 			next_state <= Miss;
 		else
+			if( hit = '0' and addr_non_cacheable = '0') then
+				block_addr <= '1';	
+			end if;
+			
 			MC_send_addr_ctrl <= '1';
 			if(Bus_DevSel= '0') then
 				load_addr_error <= '1';
