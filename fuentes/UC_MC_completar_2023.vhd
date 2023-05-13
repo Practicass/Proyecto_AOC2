@@ -166,7 +166,7 @@ Mem_ERROR <= '1' when (error_state = memory_error) else '0';
     	if (RE= '0' and WE= '0') then -- si no piden nada no hacemos nada
 			next_state <= Inicio;
 			ready <= '1';
-		elsif (state = Inicio) and ((RE= '1') or (WE= '1')) and  (unaligned ='1') then -- si el procesador quiere leer una direcci�n no alineada
+		elsif (state = Inicio) and ((RE= '1') or (WE= '1')) and  (unaligned ='1') and error_state=memory_error then -- si el procesador quiere leer una direcci�n no alineada
 			-- Se procesa el error y se ignora la solicitud
 			next_state <= Inicio;
 			ready <= '1';
@@ -177,7 +177,7 @@ Mem_ERROR <= '1' when (error_state = memory_error) else '0';
 			ready <= '1';
 			mux_output <= "10"; -- Completar. "00" es el valor por defecto. �Qu� valor hay que poner?
 			next_error_state <= No_error; --Cuando se lee el registro interno el controlador quita la se�al de error
-		elsif (state = Inicio and RE= '1' and  hit='1') then -- si piden y es acierto de lectura mandamos el dato
+		elsif (state = Inicio and RE= '1' and  hit='1' and unaligned='0') then -- si piden y es acierto de lectura mandamos el dato
 	        next_state <= Inicio;
 			ready <= '1';
 			mux_output <= "00"; -- Completar. Es el valor por defecto. �Qu� valor hay que poner? La salida es un dato almacenado en la MC
@@ -194,28 +194,33 @@ Mem_ERROR <= '1' when (error_state = memory_error) else '0';
 		if (Bus_grant= '0') then
 			next_state <= Miss;
 		else
-			if( hit = '0' and addr_non_cacheable = '0') then
+			if( hit = '0' and addr_non_cacheable = '0' and unaligned='0') then
 				block_addr <= '1';	
 			end if;
 			
 			MC_send_addr_ctrl <= '1';
-			if(Bus_DevSel= '0') then
-				load_addr_error <= '1';
-				next_error_state <= memory_error;
+			if(unaligned='1') then
 				next_state <= Inicio;
-				ready <= '1';
-			else 
-				if (WE = '1' and (hit ='1' or addr_non_cacheable = '1')) then
-					MC_bus_Rd_Wr <= '1'; 
+				next_error_state <= memory_error;
+			else
+				if(Bus_DevSel= '0') then
+					load_addr_error <= '1';
+					next_error_state <= memory_error;
+					next_state <= Inicio;
+					ready <= '1';
+				else 
+					if (WE = '1' and (hit ='1' or addr_non_cacheable = '1')) then
+						MC_bus_Rd_Wr <= '1'; 
+						
+					end if;	
 					
-				end if;	
-				
-    				
-				next_state <= Readyy;
-			end if;
-			if( hit = '0' and addr_non_cacheable = '0') then
-					inc_m <= '1';
+						
+					next_state <= Readyy;
 				end if;
+				if( hit = '0' and addr_non_cacheable = '0') then
+						inc_m <= '1';
+					end if;
+			end if;
 		end if;
 		
 
