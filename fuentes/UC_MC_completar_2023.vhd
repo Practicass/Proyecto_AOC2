@@ -203,18 +203,18 @@ Mem_ERROR <= '1' when (error_state = memory_error) else '0';
 				next_state <= Inicio;
 				next_error_state <= memory_error;
 			else
+				if (WE = '1' and (hit ='1' or addr_non_cacheable = '1')) then
+					MC_bus_Rd_Wr <= '1'; 
+					
+				end if;	
 				if(Bus_DevSel= '0') then
 					load_addr_error <= '1';
 					next_error_state <= memory_error;
 					next_state <= Inicio;
 					ready <= '1';
 				else 
-					if (WE = '1' and (hit ='1' or addr_non_cacheable = '1')) then
-						MC_bus_Rd_Wr <= '1'; 
-						
-					end if;	
 					
-						
+					
 					next_state <= Readyy;
 				end if;
 				if( hit = '0' and addr_non_cacheable = '0') then
