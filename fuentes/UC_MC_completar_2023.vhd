@@ -175,20 +175,19 @@ Mem_ERROR <= '1' when (error_state = memory_error) else '0';
 	    elsif (state = Inicio and RE= '1' and  internal_addr ='1') then -- si quieren leer un registro de la MC se lo mandamos
 	    	next_state <= Inicio;
 			ready <= '1';
-			mux_output <= "10"; -- Completar. "00" es el valor por defecto. �Qu� valor hay que poner?
+			mux_output <= "10"; 
 			next_error_state <= No_error; --Cuando se lee el registro interno el controlador quita la se�al de error
 		elsif (state = Inicio and RE= '1' and  hit='1') then -- si piden y es acierto de lectura mandamos el dato
 	        next_state <= Inicio;
 			ready <= '1';
-			mux_output <= "00"; -- Completar. Es el valor por defecto. �Qu� valor hay que poner? La salida es un dato almacenado en la MC
+			mux_output <= "00"; 
 		elsif (state = Inicio and ((WE = '1')OR(RE = '1'))) then -- escritura o fallo de lectura
 			--pedimos el bus
 	        Bus_Req <= '1';
 	        ready <= '0';
-			--Completar. �Qu� m�s hay que hacer?. 
 			next_state <= Buss;
 		end if;
-	-- Completar. �A�adir estados?
+
 	elsif(state = Buss) then
 		Bus_Req <= '1';
 		if (Bus_grant= '0') then -- si el arbitro no nos dan el bus volvemos a pedirlo
