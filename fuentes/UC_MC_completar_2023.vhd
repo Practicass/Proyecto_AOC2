@@ -82,7 +82,7 @@ component counter is
 end component;		           
 -- Ejemplos de nombres de estado. No hay que usar estos. Nombrad a vuestros estados con nombres descriptivos. As� se facilita la depuraci�n
 --type state_type is (Inicio, single_word_transfer_addr, single_word_transfer_data, block_transfer_addr, block_transfer_data, Send_Addr_Word, Send_ADDR_CB, fallo, CopyBack, bajar_Frame); 
-type state_type is (Inicio, Miss, Readyy, Waitt); 
+type state_type is (Inicio, Buss, Transfer, Waitt); 
 type error_type is (memory_error, No_error); 
 signal state, next_state : state_type; 
 signal error_state, next_error_state : error_type; 
@@ -186,13 +186,13 @@ Mem_ERROR <= '1' when (error_state = memory_error) else '0';
 	        Bus_Req <= '1';
 	        ready <= '0';
 			--Completar. �Qu� m�s hay que hacer?. 
-			next_state <= Miss;
+			next_state <= Buss;
 		end if;
 	-- Completar. �A�adir estados?
-	elsif(state = Miss) then
+	elsif(state = Buss) then
 		Bus_Req <= '1';
 		if (Bus_grant= '0') then
-			next_state <= Miss;
+			next_state <= Buss;
 		else
 			if( hit = '0' and addr_non_cacheable = '0' and unaligned='0') then
 				block_addr <= '1';	
@@ -215,7 +215,7 @@ Mem_ERROR <= '1' when (error_state = memory_error) else '0';
 				else 
 					
 					
-					next_state <= Readyy;
+					next_state <= Transfer;
 				end if;
 				if( hit = '0' and addr_non_cacheable = '0') then
 						inc_m <= '1';
@@ -224,7 +224,7 @@ Mem_ERROR <= '1' when (error_state = memory_error) else '0';
 		end if;
 		
 
-	elsif(state = Readyy) then
+	elsif(state = Transfer) then
 		Frame <= '1';
 		if(bus_TRDY = '1') then
 			if (addr_non_cacheable = '1') then
@@ -266,7 +266,7 @@ Mem_ERROR <= '1' when (error_state = memory_error) else '0';
 						next_state <= Inicio;
 					else
 						last_word <= '0';
-						next_state <= Readyy;
+						next_state <= Transfer;
 					end if;
 				end if;
 			end if;
