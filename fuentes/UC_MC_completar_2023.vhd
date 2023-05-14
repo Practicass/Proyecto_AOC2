@@ -191,23 +191,23 @@ Mem_ERROR <= '1' when (error_state = memory_error) else '0';
 	-- Completar. �A�adir estados?
 	elsif(state = Buss) then
 		Bus_Req <= '1';
-		if (Bus_grant= '0') then
+		if (Bus_grant= '0') then -- si el arbitro no nos dan el bus volvemos a pedirlo
 			next_state <= Buss;
-		else
-			if( hit = '0' and addr_non_cacheable = '0' and unaligned='0') then
+		else -- si nos dan el bus
+			if( hit = '0' and addr_non_cacheable = '0' and unaligned='0') then -- si vamos a traer un bloque, preparamos para enviar la dirección del bloque a traer
 				block_addr <= '1';	
 			end if;
 			
-			MC_send_addr_ctrl <= '1';
-			if(unaligned='1') then
+			MC_send_addr_ctrl <= '1'; 	-- enviamos dirección	
+			if(unaligned='1') then	-- si la dirección es desalineada, pasamos al estado de error de memoria y volvemos a Inicio
 				next_state <= Inicio;
 				next_error_state <= memory_error;
 			else
-				if (WE = '1' and (hit ='1' or addr_non_cacheable = '1')) then
+				if (WE = '1' and (hit ='1' or addr_non_cacheable = '1')) then	-- si es escritura en cache (dando hit) o en scratch
 					MC_bus_Rd_Wr <= '1'; 
 					
 				end if;	
-				if(Bus_DevSel= '0') then
+				if(Bus_DevSel= '0') then	-- si nadie responde a la dirección enviada cargamos la dirección en el registro interno de MC
 					load_addr_error <= '1';
 					next_error_state <= memory_error;
 					next_state <= Inicio;
@@ -217,7 +217,7 @@ Mem_ERROR <= '1' when (error_state = memory_error) else '0';
 					
 					next_state <= Transfer;
 				end if;
-				if( hit = '0' and addr_non_cacheable = '0') then
+				if( hit = '0' and addr_non_cacheable = '0') then	-- si ha habido un fallo incrementamos el contador
 						inc_m <= '1';
 					end if;
 			end if;
@@ -226,52 +226,52 @@ Mem_ERROR <= '1' when (error_state = memory_error) else '0';
 
 	elsif(state = Transfer) then
 		Frame <= '1';
-		if(bus_TRDY = '1') then
-			if (addr_non_cacheable = '1') then
-				if ( WE = '1') then	
+		if(bus_TRDY = '1') then		-- si el esclavo es capaz de realizar la operación en un ciclo activa la señal bus_TRDY
+			if (addr_non_cacheable = '1') then	
+				if ( WE = '1') then		-- si es escritura en scratch 
 					MC_send_data <= '1';
 					next_state <= Waitt;
 					last_word <= '1';
 					inc_w <= '1';
-				else
-					mux_output <= "01";
+				else	--si es lectura en scratch
+					mux_output <= "01"; 
 					next_state <= Inicio;
 					ready <= '1';
 			       	end if;	 
 			else
-				if(hit = '1') then
+				if(hit = '1') then	-- si es acierto en cache
 					one_word <= '1';
 					last_word <= '1';
 					ready <= '1';
 					MC_send_data <= '1';
-					if(hit1 = '1') then
+					if(hit1 = '1') then	-- si es acierto en la via 1
 						MC_WE1 <= '1';
-					else
+					else -- si es acierto en la via 0
 						MC_WE0 <= '1';
 					end if;
 					inc_w <= '1';
 					next_state <= Inicio;
 				else
 					mux_origen <= '1';
-					if(via_2_rpl = '1') then
+					if(via_2_rpl = '1') then	-- si la siguiente via a reemplazar es la via 1
 						MC_WE1 <= '1';
 						count_enable <= '1';
-					else
+					else -- si la siguiente via a reemplazar es la via 0
 						MC_WE0 <= '1';
 						count_enable <= '1';
 					end if;
-					if(last_word_block = '1') then
+					if(last_word_block = '1') then	-- si la palabra que se ha transferido es la 4ª, es decir, la ultima del bloque 
 						last_word <= '1';
 						MC_tags_WE <= '1';
 						next_state <= Inicio;
-					else
+					else -- si no es la úlitma palabra a transferir de un bloque
 						last_word <= '0';
 						next_state <= Transfer;
 					end if;
 				end if;
 			end if;
 		end if;
-	elsif(state = Waitt) then
+	elsif(state = Waitt) then	
 		next_state <= Inicio;
 		ready <= '1';
 	end if;
