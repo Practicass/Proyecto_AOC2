@@ -194,7 +194,7 @@ Mem_ERROR <= '1' when (error_state = memory_error) else '0';
 		if (Bus_grant= '0') then -- si el arbitro no nos dan el bus volvemos a pedirlo
 			next_state <= Buss;
 		else -- si nos dan el bus
-			if( hit = '0' and addr_non_cacheable = '0' and unaligned='0') then -- si vamos a traer un bloque, preparamos para enviar la dirección del bloque a traer
+			if( hit = '0' and addr_non_cacheable = '0') then -- si vamos a traer un bloque, preparamos para enviar la dirección del bloque a traer
 				block_addr <= '1';	
 			end if;
 			
