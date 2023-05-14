@@ -196,27 +196,24 @@ Mem_ERROR <= '1' when (error_state = memory_error) else '0';
 		else -- si nos dan el bus
 			if( hit = '0' and addr_non_cacheable = '0') then -- si vamos a traer un bloque, preparamos para enviar la dirección del bloque a traer
 				block_addr <= '1';	
+				inc_m <= '1';
 			end if;
 			
 			MC_send_addr_ctrl <= '1'; 	-- enviamos dirección	
 			
-				if (WE = '1' and (hit ='1' or addr_non_cacheable = '1')) then	-- si es escritura en cache (dando hit) o en scratch
-					MC_bus_Rd_Wr <= '1'; 
+			if (WE = '1' and (hit ='1' or addr_non_cacheable = '1')) then	-- si es escritura en cache (dando hit) o en scratch
+				MC_bus_Rd_Wr <= '1'; 
 					
-				end if;	
-				if(Bus_DevSel= '0') then	-- si nadie responde a la dirección enviada cargamos la dirección en el registro interno de MC
-					load_addr_error <= '1';
-					next_error_state <= memory_error;
-					next_state <= Inicio;
-					ready <= '1';
-				else 
-					
-					
-					next_state <= Transfer;
-				end if;
-				if( hit = '0' and addr_non_cacheable = '0') then	-- si ha habido un fallo incrementamos el contador
-						inc_m <= '1';
-					end if;
+			end if;	
+			if(Bus_DevSel= '0') then	-- si nadie responde a la dirección enviada cargamos la dirección en el registro interno de MC
+				load_addr_error <= '1';
+				next_error_state <= memory_error;
+				next_state <= Inicio;
+				ready <= '1';
+			else 
+				next_state <= Transfer;
+			end if;
+			
 			
 		end if;
 		
