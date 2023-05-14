@@ -82,7 +82,7 @@ component counter is
 end component;		           
 -- Ejemplos de nombres de estado. No hay que usar estos. Nombrad a vuestros estados con nombres descriptivos. As� se facilita la depuraci�n
 --type state_type is (Inicio, single_word_transfer_addr, single_word_transfer_data, block_transfer_addr, block_transfer_data, Send_Addr_Word, Send_ADDR_CB, fallo, CopyBack, bajar_Frame); 
-type state_type is (Inicio, Miss, Readyy); 
+type state_type is (Inicio, Miss, Readyy, Waitt); 
 type error_type is (memory_error, No_error); 
 signal state, next_state : state_type; 
 signal error_state, next_error_state : error_type; 
@@ -230,8 +230,7 @@ Mem_ERROR <= '1' when (error_state = memory_error) else '0';
 			if (addr_non_cacheable = '1') then
 				if ( WE = '1') then	
 					MC_send_data <= '1';
-					next_state <= Inicio;
-					ready <= '1';
+					next_state <= Waitt;
 					last_word <= '1';
 					inc_w <= '1';
 				else
@@ -272,6 +271,9 @@ Mem_ERROR <= '1' when (error_state = memory_error) else '0';
 				end if;
 			end if;
 		end if;
+	elsif(state = Waitt) then
+		next_state <= Inicio;
+		ready <= '1';
 	end if;
 		
    end process;
